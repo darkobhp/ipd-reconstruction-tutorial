@@ -2405,19 +2405,6 @@ window.Quarto = {
 <li>mortality event rates for each arm.</li>
 </ul>
 <p>The final KM figure displays the HR with its 95% confidence interval, log-rank p-value, median OS, and event rates. Numerical results are shown to two decimal places.</p>
-<div class="callout callout-style-default callout-warning callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Warning</span>Important methodological limitation
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>This example covers the <strong>“neither” case</strong>: only the baseline sample size is known, with no total event count and no later numbers-at-risk. It therefore assumes no censoring before the last digitized time and places remaining censoring at the end of follow-up. The reconstructed IPD is an approximation and should not be represented as the original patient-level data.</p>
-</div>
-</div>
 </section>
 <section id="packages" class="level2" data-number="2">
 <h2 data-number="2" class="anchored" data-anchor-id="packages"><span class="header-section-number">2</span> Packages</h2>
@@ -2998,6 +2985,19 @@ window.Quarto = {
 <span id="cb2-538"><a href="#cb2-538" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(final_km_plot)</span>
 <span id="cb2-539"><a href="#cb2-539" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Important methodological limitation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This scenario covers the <strong>“neither” case</strong>: only the baseline sample size is known, with no total event count and no later numbers-at-risk. It therefore assumes no censoring before the last digitized time and places remaining censoring at the end of follow-up. The reconstructed IPD is an approximation and should not be represented as the original patient-level data.</p>
+</div>
+</div>
 <section id="user-inputs" class="level4" data-number="3.0.1">
 <h4 data-number="3.0.1" class="anchored" data-anchor-id="user-inputs"><span class="header-section-number">3.0.1</span> User inputs</h4>
 <p>Each digitized CSV must contain at least two columns:</p>
@@ -5592,60 +5592,60 @@ Important
 <span id="cb36-32"><a href="#cb36-32" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb36-33"><a href="#cb36-33" aria-hidden="true" tabindex="-1"></a>The final KM figure displays the HR with its 95% confidence interval, log-rank p-value, median OS, and event rates. Numerical results are shown to two decimal places.</span>
 <span id="cb36-34"><a href="#cb36-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-35"><a href="#cb36-35" aria-hidden="true" tabindex="-1"></a>::: {.callout-warning}</span>
-<span id="cb36-36"><a href="#cb36-36" aria-hidden="true" tabindex="-1"></a><span class="fu">## Important methodological limitation</span></span>
-<span id="cb36-37"><a href="#cb36-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-38"><a href="#cb36-38" aria-hidden="true" tabindex="-1"></a>This example covers the **&quot;neither&quot; case**: only the baseline sample size is known, with no total event count and no later numbers-at-risk. It therefore assumes no censoring before the last digitized time and places remaining censoring at the end of follow-up. The reconstructed IPD is an approximation and should not be represented as the original patient-level data.</span>
-<span id="cb36-39"><a href="#cb36-39" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb36-40"><a href="#cb36-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-41"><a href="#cb36-41" aria-hidden="true" tabindex="-1"></a><span class="fu">## Packages</span></span>
-<span id="cb36-42"><a href="#cb36-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-43"><a href="#cb36-43" aria-hidden="true" tabindex="-1"></a>The analysis uses a deliberately small package set. Install each package once, if needed, and then load it for the current R session.</span>
-<span id="cb36-44"><a href="#cb36-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-47"><a href="#cb36-47" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb36-48"><a href="#cb36-48" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: packages</span></span>
-<span id="cb36-49"><a href="#cb36-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-50"><a href="#cb36-50" aria-hidden="true" tabindex="-1"></a>required_packages <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
-<span id="cb36-51"><a href="#cb36-51" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;dplyr&quot;</span>,</span>
-<span id="cb36-52"><a href="#cb36-52" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;purrr&quot;</span>,</span>
-<span id="cb36-53"><a href="#cb36-53" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;ggplot2&quot;</span>,</span>
-<span id="cb36-54"><a href="#cb36-54" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;survival&quot;</span>,</span>
-<span id="cb36-55"><a href="#cb36-55" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;survminer&quot;</span>,</span>
-<span id="cb36-56"><a href="#cb36-56" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;broom&quot;</span></span>
-<span id="cb36-57"><a href="#cb36-57" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb36-58"><a href="#cb36-58" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-59"><a href="#cb36-59" aria-hidden="true" tabindex="-1"></a>packages_to_install <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(</span>
-<span id="cb36-60"><a href="#cb36-60" aria-hidden="true" tabindex="-1"></a>  required_packages,</span>
-<span id="cb36-61"><a href="#cb36-61" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rownames</span>(<span class="fu">installed.packages</span>())</span>
-<span id="cb36-62"><a href="#cb36-62" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb36-63"><a href="#cb36-63" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-64"><a href="#cb36-64" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">length</span>(packages_to_install) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
-<span id="cb36-65"><a href="#cb36-65" aria-hidden="true" tabindex="-1"></a>  <span class="fu">install.packages</span>(packages_to_install)</span>
-<span id="cb36-66"><a href="#cb36-66" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb36-67"><a href="#cb36-67" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-68"><a href="#cb36-68" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(</span>
-<span id="cb36-69"><a href="#cb36-69" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lapply</span>(required_packages, library, <span class="at">character.only =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb36-70"><a href="#cb36-70" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb36-71"><a href="#cb36-71" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb36-35"><a href="#cb36-35" aria-hidden="true" tabindex="-1"></a><span class="fu">## Packages</span></span>
+<span id="cb36-36"><a href="#cb36-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-37"><a href="#cb36-37" aria-hidden="true" tabindex="-1"></a>The analysis uses a deliberately small package set. Install each package once, if needed, and then load it for the current R session.</span>
+<span id="cb36-38"><a href="#cb36-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-41"><a href="#cb36-41" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb36-42"><a href="#cb36-42" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: packages</span></span>
+<span id="cb36-43"><a href="#cb36-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-44"><a href="#cb36-44" aria-hidden="true" tabindex="-1"></a>required_packages <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb36-45"><a href="#cb36-45" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;dplyr&quot;</span>,</span>
+<span id="cb36-46"><a href="#cb36-46" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;purrr&quot;</span>,</span>
+<span id="cb36-47"><a href="#cb36-47" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;ggplot2&quot;</span>,</span>
+<span id="cb36-48"><a href="#cb36-48" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;survival&quot;</span>,</span>
+<span id="cb36-49"><a href="#cb36-49" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;survminer&quot;</span>,</span>
+<span id="cb36-50"><a href="#cb36-50" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;broom&quot;</span></span>
+<span id="cb36-51"><a href="#cb36-51" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb36-52"><a href="#cb36-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-53"><a href="#cb36-53" aria-hidden="true" tabindex="-1"></a>packages_to_install <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(</span>
+<span id="cb36-54"><a href="#cb36-54" aria-hidden="true" tabindex="-1"></a>  required_packages,</span>
+<span id="cb36-55"><a href="#cb36-55" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rownames</span>(<span class="fu">installed.packages</span>())</span>
+<span id="cb36-56"><a href="#cb36-56" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb36-57"><a href="#cb36-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-58"><a href="#cb36-58" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">length</span>(packages_to_install) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb36-59"><a href="#cb36-59" aria-hidden="true" tabindex="-1"></a>  <span class="fu">install.packages</span>(packages_to_install)</span>
+<span id="cb36-60"><a href="#cb36-60" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb36-61"><a href="#cb36-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-62"><a href="#cb36-62" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(</span>
+<span id="cb36-63"><a href="#cb36-63" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lapply</span>(required_packages, library, <span class="at">character.only =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb36-64"><a href="#cb36-64" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb36-65"><a href="#cb36-65" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb36-66"><a href="#cb36-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-67"><a href="#cb36-67" aria-hidden="true" tabindex="-1"></a><span class="fu">## Reconstruction workflows</span></span>
+<span id="cb36-68"><a href="#cb36-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-69"><a href="#cb36-69" aria-hidden="true" tabindex="-1"></a>Choose the tab that matches the information reported with the published Kaplan–Meier figure. Both workflows use two arms and finish with the same survival summaries.</span>
+<span id="cb36-70"><a href="#cb36-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-71"><a href="#cb36-71" aria-hidden="true" tabindex="-1"></a>::: {.panel-tabset}</span>
 <span id="cb36-72"><a href="#cb36-72" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-73"><a href="#cb36-73" aria-hidden="true" tabindex="-1"></a><span class="fu">## Reconstruction workflows</span></span>
+<span id="cb36-73"><a href="#cb36-73" aria-hidden="true" tabindex="-1"></a><span class="fu">### Scenario 1 — No numbers-at-risk table</span></span>
 <span id="cb36-74"><a href="#cb36-74" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-75"><a href="#cb36-75" aria-hidden="true" tabindex="-1"></a>Choose the tab that matches the information reported with the published Kaplan–Meier figure. Both workflows use two arms and finish with the same survival summaries.</span>
+<span id="cb36-75"><a href="#cb36-75" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">a</span><span class="ot"> class</span><span class="op">=</span><span class="st">&quot;btn btn-primary&quot;</span><span class="ot"> href</span><span class="op">=</span><span class="st">&quot;scenario_1_no_risk_table.R&quot;</span><span class="ot"> download</span><span class="dt">&gt;</span>Download the complete Scenario 1 R script<span class="dt">&lt;/</span><span class="kw">a</span><span class="dt">&gt;</span></span>
 <span id="cb36-76"><a href="#cb36-76" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-77"><a href="#cb36-77" aria-hidden="true" tabindex="-1"></a>::: {.panel-tabset}</span>
-<span id="cb36-78"><a href="#cb36-78" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-79"><a href="#cb36-79" aria-hidden="true" tabindex="-1"></a><span class="fu">### Scenario 1 — No numbers-at-risk table</span></span>
-<span id="cb36-80"><a href="#cb36-80" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-81"><a href="#cb36-81" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">a</span><span class="ot"> class</span><span class="op">=</span><span class="st">&quot;btn btn-primary&quot;</span><span class="ot"> href</span><span class="op">=</span><span class="st">&quot;scenario_1_no_risk_table.R&quot;</span><span class="ot"> download</span><span class="dt">&gt;</span>Download the complete Scenario 1 R script<span class="dt">&lt;/</span><span class="kw">a</span><span class="dt">&gt;</span></span>
-<span id="cb36-82"><a href="#cb36-82" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-83"><a href="#cb36-83" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">details</span><span class="dt">&gt;</span></span>
-<span id="cb36-84"><a href="#cb36-84" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">summary</span><span class="dt">&gt;&lt;</span><span class="kw">strong</span><span class="dt">&gt;</span>Show the complete Scenario 1 script<span class="dt">&lt;/</span><span class="kw">strong</span><span class="dt">&gt;</span> — use the copy button in the upper-right corner of the code block<span class="dt">&lt;/</span><span class="kw">summary</span><span class="dt">&gt;</span></span>
+<span id="cb36-77"><a href="#cb36-77" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">details</span><span class="dt">&gt;</span></span>
+<span id="cb36-78"><a href="#cb36-78" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">summary</span><span class="dt">&gt;&lt;</span><span class="kw">strong</span><span class="dt">&gt;</span>Show the complete Scenario 1 script<span class="dt">&lt;/</span><span class="kw">strong</span><span class="dt">&gt;</span> — use the copy button in the upper-right corner of the code block<span class="dt">&lt;/</span><span class="kw">summary</span><span class="dt">&gt;</span></span>
+<span id="cb36-79"><a href="#cb36-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-80"><a href="#cb36-80" aria-hidden="true" tabindex="-1"></a><span class="in">```r</span></span>
+<span id="cb36-81"><a href="#cb36-81" aria-hidden="true" tabindex="-1"></a>{{<span class="sc">&lt;</span> include scenario_1_no_risk_table.R <span class="sc">&gt;</span>}}</span>
+<span id="cb36-82"><a href="#cb36-82" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb36-83"><a href="#cb36-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-84"><a href="#cb36-84" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">details</span><span class="dt">&gt;</span></span>
 <span id="cb36-85"><a href="#cb36-85" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-86"><a href="#cb36-86" aria-hidden="true" tabindex="-1"></a><span class="in">```r</span></span>
-<span id="cb36-87"><a href="#cb36-87" aria-hidden="true" tabindex="-1"></a>{{<span class="sc">&lt;</span> include scenario_1_no_risk_table.R <span class="sc">&gt;</span>}}</span>
-<span id="cb36-88"><a href="#cb36-88" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb36-89"><a href="#cb36-89" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-90"><a href="#cb36-90" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">details</span><span class="dt">&gt;</span></span>
+<span id="cb36-86"><a href="#cb36-86" aria-hidden="true" tabindex="-1"></a>::: {.callout-warning}</span>
+<span id="cb36-87"><a href="#cb36-87" aria-hidden="true" tabindex="-1"></a><span class="fu">## Important methodological limitation</span></span>
+<span id="cb36-88"><a href="#cb36-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-89"><a href="#cb36-89" aria-hidden="true" tabindex="-1"></a>This scenario covers the **&quot;neither&quot; case**: only the baseline sample size is known, with no total event count and no later numbers-at-risk. It therefore assumes no censoring before the last digitized time and places remaining censoring at the end of follow-up. The reconstructed IPD is an approximation and should not be represented as the original patient-level data.</span>
+<span id="cb36-90"><a href="#cb36-90" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb36-91"><a href="#cb36-91" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb36-92"><a href="#cb36-92" aria-hidden="true" tabindex="-1"></a><span class="fu">#### User inputs</span></span>
 <span id="cb36-93"><a href="#cb36-93" aria-hidden="true" tabindex="-1"></a></span>
