@@ -53,9 +53,9 @@ arm2_label <- "Treatment"                           # CHANGE: arm name from the 
 arm2_time_max <- NA_real_                            # USUALLY LEAVE UNCHANGED
 
 # STEP 4: Review the plot settings.
-time_unit <- "Months"                # CHANGE if the paper uses years or days
+time_unit <- "Months"
 x_axis_max <- 36                      # CHANGE to the largest x-axis time to display
-x_axis_break_by <- 6                  # CHANGE to the desired spacing between ticks
+x_axis_break_by <- 6                  # CHANGE to the spacing used in the paper (spacing between ticks on the x-axis)
 arm_colours <- c("#D55E00", "#0072B2") # OPTIONAL: Arm 1 and Arm 2 colours
 
 # ==================== END OF VALUES TO CHANGE =========================
