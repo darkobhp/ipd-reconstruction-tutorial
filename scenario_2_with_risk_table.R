@@ -1,6 +1,7 @@
 # SCENARIO 2: TWO-ARM IPD RECONSTRUCTION WITH A NUMBERS-AT-RISK TABLE
 # Generated from the accompanying Quarto tutorial.
-# Edit the USER INPUTS section, then run this file from top to bottom.
+# Start in the USER INPUTS section. Change only the clearly marked values.
+# Then run this file from top to bottom.
 
 # ---- PACKAGES ----
 
@@ -26,28 +27,61 @@ invisible(
   lapply(required_packages, library, character.only = TRUE)
 )
 
-# ---- USER INPUTS ----
+# ---- RISK TABLE INPUTS ----
 
-# Set to FALSE when using your own digitized CSV files.
-use_demo_data <- TRUE
+# ====================== USER INPUTS: CHANGE THESE ======================
 
-# Arm 1: this arm becomes the Cox model reference group.
-arm1_file     <- "path/to/arm1_digitized_curve.csv"
-arm1_N        <- 62L
-arm1_label    <- "Control"
-arm1_time_max <- NA_real_
+# STEP 1: Keep TRUE while learning with the dummy data.
+# Change this to FALSE when using your own digitized curves and risk tables.
+risk_use_demo_data <- TRUE
 
-# Arm 2
-arm2_file     <- "path/to/arm2_digitized_curve.csv"
-arm2_N        <- 68L
-arm2_label    <- "Treatment"
-arm2_time_max <- NA_real_
+# STEP 2: Enter Arm 1 information. Arm 1 is the reference group.
+risk_arm1_file <- "~/Downloads/arm1_digitized_curve.csv" # CHANGE: Arm 1 CSV
+risk_arm1_label <- "Control"                             # CHANGE: paper's arm name
 
-# Labels and display settings
-time_unit       <- "Months"
-x_axis_max      <- 36
-x_axis_break_by <- 6
-arm_colours     <- c("#D55E00", "#0072B2")
+# STEP 3: Copy the risk-table time headings and Arm 1 counts from the paper.
+# The first time must be 0, and the first count is the baseline number at risk.
+risk_arm1_times <- c(0, 6, 12, 18, 24, 30) # CHANGE: risk-table times
+risk_arm1_n <- c(62, 52, 39, 28, 20, 14)   # CHANGE: Arm 1 risk counts
+
+# CHANGE only if the paper reports a total number of events for Arm 1.
+# Otherwise leave as NA_integer_.
+risk_arm1_total_events <- NA_integer_
+
+# STEP 4: Enter Arm 2 information.
+risk_arm2_file <- "~/Downloads/arm2_digitized_curve.csv" # CHANGE: Arm 2 CSV
+risk_arm2_label <- "Treatment"                           # CHANGE: paper's arm name
+
+# STEP 5: Copy the risk-table time headings and Arm 2 counts from the paper.
+# These vectors must have the same length. Usually both arms share risk times,
+# but enter them separately in case the paper reports different intervals.
+risk_arm2_times <- c(0, 6, 12, 18, 24, 30) # CHANGE: risk-table times
+risk_arm2_n <- c(68, 61, 52, 42, 34, 26)   # CHANGE: Arm 2 risk counts
+risk_arm2_total_events <- NA_integer_       # CHANGE only if reported
+
+# STEP 6: Review time and plot settings.
+risk_arm1_time_max <- NA_real_ # USUALLY LEAVE UNCHANGED
+risk_arm2_time_max <- NA_real_ # USUALLY LEAVE UNCHANGED
+time_unit <- "Months"           # CHANGE if the paper uses years or days
+x_axis_max <- 36                 # CHANGE to the largest time to display
+x_axis_break_by <- 6             # CHANGE to the desired tick spacing
+arm_colours <- c("#D55E00", "#0072B2") # OPTIONAL
+
+# ==================== END OF VALUES TO CHANGE =========================
+
+# ---- RISK TABLE DEMO CURVES ----
+
+risk_demo_control <- data.frame(
+  time = c(0, 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36),
+  survival = c(1.00, 0.94, 0.84, 0.74, 0.64, 0.55, 0.47,
+               0.39, 0.32, 0.27, 0.23, 0.19, 0.16)
+)
+
+risk_demo_treatment <- data.frame(
+  time = c(0, 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36),
+  survival = c(1.00, 0.97, 0.91, 0.85, 0.78, 0.70, 0.63,
+               0.56, 0.49, 0.43, 0.38, 0.33, 0.29)
+)
 
 # ---- CLEAN KM FUNCTION ----
 
@@ -194,42 +228,6 @@ plot_arm_check <- function(result, arm_label, colour) {
     ggplot2::theme_classic(base_size = 12) +
     ggplot2::theme(legend.position = "bottom")
 }
-
-# ---- RISK TABLE INPUTS ----
-
-risk_use_demo_data <- TRUE
-
-# Arm 1 (reference arm)
-risk_arm1_file <- "path/to/control_digitized_curve.csv"
-risk_arm1_label <- "Control"
-risk_arm1_times <- c(0, 6, 12, 18, 24, 30)
-risk_arm1_n <- c(62, 52, 39, 28, 20, 14)
-risk_arm1_total_events <- NA_integer_
-
-# Arm 2
-risk_arm2_file <- "path/to/treatment_digitized_curve.csv"
-risk_arm2_label <- "Treatment"
-risk_arm2_times <- c(0, 6, 12, 18, 24, 30)
-risk_arm2_n <- c(68, 61, 52, 42, 34, 26)
-risk_arm2_total_events <- NA_integer_
-
-# Optional time rescaling; leave as NA when time is already in real units.
-risk_arm1_time_max <- NA_real_
-risk_arm2_time_max <- NA_real_
-
-# ---- RISK TABLE DEMO CURVES ----
-
-risk_demo_control <- data.frame(
-  time = c(0, 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36),
-  survival = c(1.00, 0.94, 0.84, 0.74, 0.64, 0.55, 0.47,
-               0.39, 0.32, 0.27, 0.23, 0.19, 0.16)
-)
-
-risk_demo_treatment <- data.frame(
-  time = c(0, 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36),
-  survival = c(1.00, 0.97, 0.91, 0.85, 0.78, 0.70, 0.63,
-               0.56, 0.49, 0.43, 0.38, 0.33, 0.29)
-)
 
 # ---- RISK TABLE RECONSTRUCTION FUNCTION ----
 
