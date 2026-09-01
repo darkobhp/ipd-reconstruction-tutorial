@@ -62,9 +62,9 @@ risk_arm2_total_events <- NA_integer_       # CHANGE only if reported
 # STEP 6: Review time and plot settings.
 risk_arm1_time_max <- NA_real_ # USUALLY LEAVE UNCHANGED
 risk_arm2_time_max <- NA_real_ # USUALLY LEAVE UNCHANGED
-time_unit <- "Months"           # CHANGE if the paper uses years or days
+time_unit <- "Months"
 x_axis_max <- 36                 # CHANGE to the largest time to display
-x_axis_break_by <- 6             # CHANGE to the desired tick spacing
+x_axis_break_by <- 6             # CHANGE to the spacing used in the paper (spacing between ticks on the x-axis)
 arm_colours <- c("#D55E00", "#0072B2") # OPTIONAL
 
 # ==================== END OF VALUES TO CHANGE =========================
