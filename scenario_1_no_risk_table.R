@@ -1,6 +1,7 @@
 # SCENARIO 1: TWO-ARM IPD RECONSTRUCTION WITHOUT A NUMBERS-AT-RISK TABLE
 # Generated from the accompanying Quarto tutorial.
-# Edit the USER INPUTS section, then run this file from top to bottom.
+# Start in the USER INPUTS section. Change only the clearly marked values.
+# Then run this file from top to bottom.
 
 # ---- PACKAGES ----
 
@@ -28,26 +29,36 @@ invisible(
 
 # ---- USER INPUTS ----
 
-# Set to FALSE when using your own digitized CSV files.
+# ====================== USER INPUTS: CHANGE THESE ======================
+
+# STEP 1: Keep TRUE while learning with the dummy data.
+# Change this to FALSE when you are ready to use your own two CSV files.
 use_demo_data <- TRUE
 
-# Arm 1: this arm becomes the Cox model reference group.
-arm1_file     <- "path/to/arm1_digitized_curve.csv"
-arm1_N        <- 62L
-arm1_label    <- "Control"
-arm1_time_max <- NA_real_
+# STEP 2: Enter the information for Arm 1.
+# Arm 1 becomes the reference group in the hazard-ratio calculation.
+arm1_file <- "~/Downloads/arm1_digitized_curve.csv" # CHANGE: path to Arm 1 CSV
+arm1_N <- 62L                                        # CHANGE: number at risk at time 0
+arm1_label <- "Control"                             # CHANGE: arm name from the paper
 
-# Arm 2
-arm2_file     <- "path/to/arm2_digitized_curve.csv"
-arm2_N        <- 68L
-arm2_label    <- "Treatment"
-arm2_time_max <- NA_real_
+# Leave as NA_real_ when the CSV time column is already in months/years.
+# If the digitized time is scaled from 0 to 1, replace NA_real_ with the
+# maximum time shown on the paper's x-axis (for example, 36).
+arm1_time_max <- NA_real_                            # USUALLY LEAVE UNCHANGED
 
-# Labels and display settings
-time_unit       <- "Months"
-x_axis_max      <- 36
-x_axis_break_by <- 6
-arm_colours     <- c("#D55E00", "#0072B2")
+# STEP 3: Enter the information for Arm 2.
+arm2_file <- "~/Downloads/arm2_digitized_curve.csv" # CHANGE: path to Arm 2 CSV
+arm2_N <- 80L                                        # CHANGE: number at risk at time 0
+arm2_label <- "Treatment"                           # CHANGE: arm name from the paper
+arm2_time_max <- NA_real_                            # USUALLY LEAVE UNCHANGED
+
+# STEP 4: Review the plot settings.
+time_unit <- "Months"                # CHANGE if the paper uses years or days
+x_axis_max <- 36                      # CHANGE to the largest x-axis time to display
+x_axis_break_by <- 6                  # CHANGE to the desired spacing between ticks
+arm_colours <- c("#D55E00", "#0072B2") # OPTIONAL: Arm 1 and Arm 2 colours
+
+# ==================== END OF VALUES TO CHANGE =========================
 
 # ---- DEMO DATA ----
 
