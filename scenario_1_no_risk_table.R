@@ -1,9 +1,7 @@
-# SCENARIO 1: TWO-ARM IPD RECONSTRUCTION WITHOUT A NUMBERS-AT-RISK TABLE
-# Generated from the accompanying Quarto tutorial.
-# Start in the USER INPUTS section. Change only the clearly marked values.
-# Then run this file from top to bottom.
+# Scenario 1: no numbers-at-risk table
+# Generated from the Quarto tutorial. Change only values in USER INPUTS.
 
-# ---- PACKAGES ----
+# ---- packages ----
 
 required_packages <- c(
   "dplyr",
@@ -27,7 +25,70 @@ invisible(
   lapply(required_packages, library, character.only = TRUE)
 )
 
-# ---- USER INPUTS ----
+# ---- sanity-check-function ----
+
+run_reconstruction_sanity_checks <- function(
+    reconstructed_hr,
+    reported_hr,
+    reconstructed_medians,
+    reported_medians,
+    arm_labels,
+    median_tolerance_months = 0.20,
+    log_hr_tolerance = 0.10) {
+
+  if (length(reconstructed_hr) != 1L || !is.finite(reconstructed_hr) ||
+      reconstructed_hr <= 0 || length(reported_hr) != 1L ||
+      !is.finite(reported_hr) || reported_hr <= 0) {
+    stop("Reported and reconstructed HRs must each be one positive number.")
+  }
+
+  if (length(reconstructed_medians) != 2L ||
+      length(reported_medians) != 2L || length(arm_labels) != 2L) {
+    stop("Supply exactly two reconstructed medians, reported medians, and arm labels.")
+  }
+
+  median_difference <- abs(reconstructed_medians - reported_medians)
+  median_pass <- is.finite(median_difference) &
+    median_difference <= median_tolerance_months + sqrt(.Machine$double.eps)
+
+  log_hr_difference <- abs(log(reported_hr / reconstructed_hr))
+  hr_pass <- is.finite(log_hr_difference) &&
+    log_hr_difference <= log_hr_tolerance + sqrt(.Machine$double.eps)
+
+  results <- data.frame(
+    check = c(
+      paste0("Median OS: ", arm_labels[1]),
+      paste0("Median OS: ", arm_labels[2]),
+      paste0("HR: ", arm_labels[2], " vs ", arm_labels[1])
+    ),
+    reported = sprintf("%.2f", c(reported_medians, reported_hr)),
+    reconstructed = sprintf("%.2f", c(reconstructed_medians, reconstructed_hr)),
+    comparison = c(
+      sprintf("absolute difference = %.2f months", median_difference),
+      sprintf("absolute log ratio = %.3f", log_hr_difference)
+    ),
+    acceptance_rule = c(
+      rep(sprintf("difference <= %.2f months", median_tolerance_months), 2L),
+      sprintf("absolute log ratio <= %.2f", log_hr_tolerance)
+    ),
+    result = ifelse(c(median_pass, hr_pass), "PASS", "FAIL"),
+    check.names = FALSE
+  )
+
+  print(results, row.names = FALSE)
+
+  failed_checks <- results$check[results$result == "FAIL"]
+  if (length(failed_checks) == 0L) {
+    cat("\nOVERALL RESULT: PASS - all median OS and HR sanity checks passed.\n")
+  } else {
+    cat("\nOVERALL RESULT: FAIL - the following check(s) did not pass:\n")
+    cat(paste0("- ", failed_checks, collapse = "\n"), "\n")
+  }
+
+  invisible(list(results = results, all_pass = length(failed_checks) == 0L))
+}
+
+# ---- user-inputs ----
 
 # ====================== USER INPUTS: CHANGE THESE ======================
 
@@ -52,7 +113,14 @@ arm2_N <- 80L                                        # CHANGE: number at risk at
 arm2_label <- "Treatment"                           # CHANGE: arm name from the paper
 arm2_time_max <- NA_real_                            # USUALLY LEAVE UNCHANGED
 
-# STEP 4: Review the plot settings.
+# STEP 4: Enter the results reported in the paper for the sanity checks.
+# The HR must be Arm 2 versus Arm 1. If the paper gives Arm 1 versus Arm 2,
+# enter its reciprocal (1 / the reported HR) instead.
+reported_hr_arm2_vs_arm1 <- 0.66       # CHANGE: published HR, Arm 2 vs Arm 1
+reported_median_os_arm1 <- 16.75       # CHANGE: published Arm 1 median OS, months
+reported_median_os_arm2 <- 22.93       # CHANGE: published Arm 2 median OS, months
+
+# STEP 5: Review the plot settings.
 time_unit <- "Months"
 x_axis_max <- 36                      # CHANGE to the largest x-axis time to display
 x_axis_break_by <- 6                  # CHANGE to the spacing used in the paper (spacing between ticks on the x-axis)
@@ -60,7 +128,7 @@ arm_colours <- c("#D55E00", "#0072B2") # OPTIONAL: Arm 1 and Arm 2 colours
 
 # ==================== END OF VALUES TO CHANGE =========================
 
-# ---- DEMO DATA ----
+# ---- demo-data ----
 
 if (use_demo_data) {
   arm1_curve <- data.frame(
@@ -74,7 +142,7 @@ if (use_demo_data) {
   )
 }
 
-# ---- CLEAN KM FUNCTION ----
+# ---- clean-km-function ----
 
 clamp01 <- function(x) {
   pmin(pmax(x, 0), 1)
@@ -117,7 +185,7 @@ clean_km <- function(t_raw, S_raw) {
   curve
 }
 
-# ---- ESTIMATE EVENTS FUNCTION ----
+# ---- estimate-events-function ----
 
 events_no_censor <- function(S, N) {
   if (length(S) < 2) {
@@ -176,7 +244,7 @@ events_no_censor <- function(S, N) {
   events
 }
 
-# ---- BUILD IPD FUNCTION ----
+# ---- build-ipd-function ----
 
 build_ipd_uniform <- function(curve, events, N, arm_label) {
   if (length(events) != nrow(curve) - 1L) {
@@ -210,7 +278,7 @@ build_ipd_uniform <- function(curve, events, N, arm_label) {
   )
 }
 
-# ---- RECONSTRUCT ARM FUNCTION ----
+# ---- reconstruct-arm-function ----
 
 read_digitized_curve <- function(file) {
   first_attempt <- tryCatch(
@@ -270,7 +338,7 @@ reconstruct_arm <- function(file = NULL,
   )
 }
 
-# ---- RECONSTRUCT TWO ARMS ----
+# ---- reconstruct-two-arms ----
 
 arm1_result <- reconstruct_arm(
   file = if (!use_demo_data) arm1_file else NULL,
@@ -299,7 +367,7 @@ combined_ipd <- dplyr::bind_rows(
 
 head(combined_ipd)
 
-# ---- VALIDATION TESTS ----
+# ---- validation-tests ----
 
 stopifnot(
   nrow(arm1_result$ipd) == arm1_N,
@@ -326,7 +394,7 @@ validation_summary |>
     event_rate_percent = sprintf("%.2f%%", event_rate_percent)
   )
 
-# ---- ARM DIAGNOSTIC FUNCTION ----
+# ---- arm-diagnostic-function ----
 
 plot_arm_check <- function(result, arm_label, colour) {
   reconstructed_fit <- survival::survfit(
@@ -369,15 +437,15 @@ plot_arm_check <- function(result, arm_label, colour) {
     ggplot2::theme(legend.position = "bottom")
 }
 
-# ---- PLOT ARM 1 ----
+# ---- plot-arm-1 ----
 
 plot_arm_check(arm1_result, arm1_label, arm_colours[1])
 
-# ---- PLOT ARM 2 ----
+# ---- plot-arm-2 ----
 
 plot_arm_check(arm2_result, arm2_label, arm_colours[2])
 
-# ---- SURVIVAL MODELS ----
+# ---- survival-models ----
 
 survival_object <- survival::Surv(
   time = combined_ipd$time,
@@ -416,7 +484,7 @@ hr_ci_low <- cox_result$conf.low[1]
 hr_ci_high <- cox_result$conf.high[1]
 hr_p <- cox_result$p.value[1]
 
-# ---- SUMMARY STATISTICS ----
+# ---- summary-statistics ----
 
 format_p <- function(p) {
   ifelse(
@@ -472,7 +540,7 @@ arm_summary |>
 
 model_summary
 
-# ---- FINAL PLOT ----
+# ---- final-plot ----
 
 arm_annotation_lines <- paste0(
   arm_summary$arm,
@@ -547,4 +615,25 @@ final_km_plot$plot <- final_km_plot$plot +
   )
 
 print(final_km_plot)
+
+# ---- scenario-1-sanity-check ----
+
+scenario1_medians <- stats::setNames(
+  arm_summary$median_os,
+  arm_summary$arm
+)
+
+scenario1_sanity_checks <- run_reconstruction_sanity_checks(
+  reconstructed_hr = hr,
+  reported_hr = reported_hr_arm2_vs_arm1,
+  reconstructed_medians = c(
+    scenario1_medians[[arm1_label]],
+    scenario1_medians[[arm2_label]]
+  ),
+  reported_medians = c(
+    reported_median_os_arm1,
+    reported_median_os_arm2
+  ),
+  arm_labels = c(arm1_label, arm2_label)
+)
 
