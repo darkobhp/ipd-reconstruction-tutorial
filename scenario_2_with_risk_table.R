@@ -10,7 +10,8 @@ required_packages <- c(
   "survival",
   "survminer",
   "broom",
-  "knitr"
+  "knitr",
+  "gtsummary"
 )
 
 packages_to_install <- setdiff(
@@ -76,6 +77,20 @@ run_reconstruction_sanity_checks <- function(
     check.names = FALSE
   )
 
+  display_data <- data.frame(
+    check = results$check,
+    reported = c(reported_medians, reported_hr),
+    reconstructed = c(reconstructed_medians, reconstructed_hr),
+    diagnostic = c(median_difference, log_hr_difference),
+    acceptance_limit = c(
+      median_tolerance_months,
+      median_tolerance_months,
+      log_hr_tolerance
+    ),
+    passed = as.integer(c(median_pass, hr_pass)),
+    check.names = FALSE
+  )
+
   failed_checks <- results$check[results$result == "FAIL"]
   if (length(failed_checks) == 0L) {
     cat("\nOVERALL RESULT: PASS - all median OS and HR sanity checks passed.\n")
@@ -84,35 +99,82 @@ run_reconstruction_sanity_checks <- function(
     cat(paste0("- ", failed_checks, collapse = "\n"), "\n")
   }
 
-  invisible(list(results = results, all_pass = length(failed_checks) == 0L))
+  invisible(
+    list(
+      results = results,
+      display_data = display_data,
+      all_pass = length(failed_checks) == 0L
+    )
+  )
 }
 
 display_sanity_check_table <- function(checks, table_title) {
   overall_result <- ifelse(checks$all_pass, "PASS", "FAIL")
   full_title <- paste0(table_title, " - Overall result: ", overall_result)
 
-  # In a rendered Quarto document, return a formatted HTML table.
-  if (knitr::is_html_output()) {
-    return(
-      knitr::kable(
-        checks$results,
-        format = "html",
-        caption = full_title,
-        align = c("l", "r", "r", "l", "l", "c"),
-        table.attr = paste0(
-          'class="table table-striped table-hover table-bordered" ',
-          'style="width:100%;"'
+  table_data <- checks$display_data |>
+    dplyr::mutate(
+      check = factor(check, levels = check)
+    )
+
+  formatted_table <- table_data |>
+    gtsummary::tbl_summary(
+      by = check,
+      include = -check,
+      type = dplyr::everything() ~ "continuous",
+      statistic = dplyr::everything() ~ "{mean}",
+      digits = list(
+        reported ~ 2,
+        reconstructed ~ 2,
+        diagnostic ~ 3,
+        acceptance_limit ~ 2,
+        passed ~ 0
+      ),
+      label = list(
+        reported ~ "Reported",
+        reconstructed ~ "Reconstructed",
+        diagnostic ~ "Absolute difference / log ratio",
+        acceptance_limit ~ "Acceptance limit (<=)",
+        passed ~ "Result"
+      ),
+      missing = "no"
+    ) |>
+    gtsummary::modify_header(
+      gtsummary::all_stat_cols() ~ "**{level}**"
+    ) |>
+    gtsummary::modify_table_body(
+      ~ .x |>
+        dplyr::mutate(
+          dplyr::across(
+            dplyr::starts_with("stat_"),
+            ~ ifelse(
+              variable == "passed",
+              ifelse(.x == "1", "PASS", "FAIL"),
+              .x
+            )
+          )
         )
-      )
+    ) |>
+    gtsummary::bold_labels() |>
+    gtsummary::modify_caption(paste0("**", full_title, "**"))
+
+  # Quarto renders the gtsummary object as a publication-ready table.
+  if (knitr::is_html_output()) {
+    return(formatted_table)
+  }
+
+  # Printing a gtsummary table interactively opens its HTML output in the
+  # RStudio Viewer without calling the native spreadsheet Data Viewer.
+  if (interactive()) {
+    tryCatch(
+      print(formatted_table),
+      error = function(error_condition) {
+        message("The HTML Viewer could not be opened; using the console table.")
+      }
     )
   }
 
-  # When sourced interactively in RStudio, also open the rows and columns
-  # in the Data Viewer. The same table remains available as checks$results.
-  if (interactive()) {
-    utils::View(checks$results, title = full_title)
-  }
-
+  # Always retain a console fallback and keep the underlying data accessible.
   print(checks$results, row.names = FALSE)
   invisible(checks$results)
 }
