@@ -9,7 +9,8 @@ required_packages <- c(
   "ggplot2",
   "survival",
   "survminer",
-  "broom"
+  "broom",
+  "knitr"
 )
 
 packages_to_install <- setdiff(
@@ -75,8 +76,6 @@ run_reconstruction_sanity_checks <- function(
     check.names = FALSE
   )
 
-  print(results, row.names = FALSE)
-
   failed_checks <- results$check[results$result == "FAIL"]
   if (length(failed_checks) == 0L) {
     cat("\nOVERALL RESULT: PASS - all median OS and HR sanity checks passed.\n")
@@ -86,6 +85,36 @@ run_reconstruction_sanity_checks <- function(
   }
 
   invisible(list(results = results, all_pass = length(failed_checks) == 0L))
+}
+
+display_sanity_check_table <- function(checks, table_title) {
+  overall_result <- ifelse(checks$all_pass, "PASS", "FAIL")
+  full_title <- paste0(table_title, " - Overall result: ", overall_result)
+
+  # In a rendered Quarto document, return a formatted HTML table.
+  if (knitr::is_html_output()) {
+    return(
+      knitr::kable(
+        checks$results,
+        format = "html",
+        caption = full_title,
+        align = c("l", "r", "r", "l", "l", "c"),
+        table.attr = paste0(
+          'class="table table-striped table-hover table-bordered" ',
+          'style="width:100%;"'
+        )
+      )
+    )
+  }
+
+  # When sourced interactively in RStudio, also open the rows and columns
+  # in the Data Viewer. The same table remains available as checks$results.
+  if (interactive()) {
+    utils::View(checks$results, title = full_title)
+  }
+
+  print(checks$results, row.names = FALSE)
+  invisible(checks$results)
 }
 
 # ---- risk-table-inputs ----
@@ -802,5 +831,10 @@ scenario2_sanity_checks <- run_reconstruction_sanity_checks(
     risk_reported_median_os_arm2
   ),
   arm_labels = c(risk_arm1_label, risk_arm2_label)
+)
+
+display_sanity_check_table(
+  scenario2_sanity_checks,
+  "Scenario 2 reconstruction sanity checks"
 )
 
