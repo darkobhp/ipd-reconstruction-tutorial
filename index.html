@@ -2549,42 +2549,54 @@ window.Quarto = {
 <span id="cb2-111"><a href="#cb2-111" aria-hidden="true" tabindex="-1"></a>    gtsummary<span class="sc">::</span><span class="fu">modify_header</span>(</span>
 <span id="cb2-112"><a href="#cb2-112" aria-hidden="true" tabindex="-1"></a>      gtsummary<span class="sc">::</span><span class="fu">all_stat_cols</span>() <span class="sc">~</span> <span class="st">&quot;**{level}**&quot;</span></span>
 <span id="cb2-113"><a href="#cb2-113" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
-<span id="cb2-114"><a href="#cb2-114" aria-hidden="true" tabindex="-1"></a>    gtsummary<span class="sc">::</span><span class="fu">modify_table_body</span>(</span>
-<span id="cb2-115"><a href="#cb2-115" aria-hidden="true" tabindex="-1"></a>      <span class="sc">~</span> .x <span class="sc">|&gt;</span></span>
-<span id="cb2-116"><a href="#cb2-116" aria-hidden="true" tabindex="-1"></a>        dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
-<span id="cb2-117"><a href="#cb2-117" aria-hidden="true" tabindex="-1"></a>          dplyr<span class="sc">::</span><span class="fu">across</span>(</span>
-<span id="cb2-118"><a href="#cb2-118" aria-hidden="true" tabindex="-1"></a>            dplyr<span class="sc">::</span><span class="fu">starts_with</span>(<span class="st">&quot;stat_&quot;</span>),</span>
-<span id="cb2-119"><a href="#cb2-119" aria-hidden="true" tabindex="-1"></a>            <span class="sc">~</span> <span class="fu">ifelse</span>(</span>
-<span id="cb2-120"><a href="#cb2-120" aria-hidden="true" tabindex="-1"></a>              variable <span class="sc">==</span> <span class="st">&quot;passed&quot;</span>,</span>
-<span id="cb2-121"><a href="#cb2-121" aria-hidden="true" tabindex="-1"></a>              <span class="fu">ifelse</span>(.x <span class="sc">==</span> <span class="st">&quot;1&quot;</span>, <span class="st">&quot;PASS&quot;</span>, <span class="st">&quot;FAIL&quot;</span>),</span>
-<span id="cb2-122"><a href="#cb2-122" aria-hidden="true" tabindex="-1"></a>              .x</span>
-<span id="cb2-123"><a href="#cb2-123" aria-hidden="true" tabindex="-1"></a>            )</span>
-<span id="cb2-124"><a href="#cb2-124" aria-hidden="true" tabindex="-1"></a>          )</span>
-<span id="cb2-125"><a href="#cb2-125" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb2-126"><a href="#cb2-126" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
-<span id="cb2-127"><a href="#cb2-127" aria-hidden="true" tabindex="-1"></a>    gtsummary<span class="sc">::</span><span class="fu">bold_labels</span>() <span class="sc">|&gt;</span></span>
-<span id="cb2-128"><a href="#cb2-128" aria-hidden="true" tabindex="-1"></a>    gtsummary<span class="sc">::</span><span class="fu">modify_caption</span>(<span class="fu">paste0</span>(<span class="st">&quot;**&quot;</span>, full_title, <span class="st">&quot;**&quot;</span>))</span>
-<span id="cb2-129"><a href="#cb2-129" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-130"><a href="#cb2-130" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Quarto renders the gtsummary object as a publication-ready table.</span></span>
-<span id="cb2-131"><a href="#cb2-131" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (knitr<span class="sc">::</span><span class="fu">is_html_output</span>()) {</span>
-<span id="cb2-132"><a href="#cb2-132" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(formatted_table)</span>
-<span id="cb2-133"><a href="#cb2-133" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb2-134"><a href="#cb2-134" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-135"><a href="#cb2-135" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Printing a gtsummary table interactively opens its HTML output in the</span></span>
-<span id="cb2-136"><a href="#cb2-136" aria-hidden="true" tabindex="-1"></a>  <span class="co"># RStudio Viewer without calling the native spreadsheet Data Viewer.</span></span>
-<span id="cb2-137"><a href="#cb2-137" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">interactive</span>()) {</span>
-<span id="cb2-138"><a href="#cb2-138" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tryCatch</span>(</span>
-<span id="cb2-139"><a href="#cb2-139" aria-hidden="true" tabindex="-1"></a>      <span class="fu">print</span>(formatted_table),</span>
-<span id="cb2-140"><a href="#cb2-140" aria-hidden="true" tabindex="-1"></a>      <span class="at">error =</span> <span class="cf">function</span>(error_condition) {</span>
-<span id="cb2-141"><a href="#cb2-141" aria-hidden="true" tabindex="-1"></a>        <span class="fu">message</span>(<span class="st">&quot;The HTML Viewer could not be opened; using the console table.&quot;</span>)</span>
-<span id="cb2-142"><a href="#cb2-142" aria-hidden="true" tabindex="-1"></a>      }</span>
-<span id="cb2-143"><a href="#cb2-143" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb2-144"><a href="#cb2-144" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb2-145"><a href="#cb2-145" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-146"><a href="#cb2-146" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Always retain a console fallback and keep the underlying data accessible.</span></span>
-<span id="cb2-147"><a href="#cb2-147" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(checks<span class="sc">$</span>results, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb2-148"><a href="#cb2-148" aria-hidden="true" tabindex="-1"></a>  <span class="fu">invisible</span>(checks<span class="sc">$</span>results)</span>
-<span id="cb2-149"><a href="#cb2-149" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-114"><a href="#cb2-114" aria-hidden="true" tabindex="-1"></a>    gtsummary<span class="sc">::</span><span class="fu">modify_footnote_header</span>(</span>
+<span id="cb2-115"><a href="#cb2-115" aria-hidden="true" tabindex="-1"></a>      <span class="at">footnote =</span> <span class="cn">NA_character_</span>,</span>
+<span id="cb2-116"><a href="#cb2-116" aria-hidden="true" tabindex="-1"></a>      <span class="at">columns =</span> gtsummary<span class="sc">::</span><span class="fu">all_stat_cols</span>()</span>
+<span id="cb2-117"><a href="#cb2-117" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
+<span id="cb2-118"><a href="#cb2-118" aria-hidden="true" tabindex="-1"></a>    gtsummary<span class="sc">::</span><span class="fu">modify_footnote_header</span>(</span>
+<span id="cb2-119"><a href="#cb2-119" aria-hidden="true" tabindex="-1"></a>      <span class="at">footnote =</span> <span class="fu">paste0</span>(</span>
+<span id="cb2-120"><a href="#cb2-120" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;Cross-check and confirm that the original and reconstructed median &quot;</span>,</span>
+<span id="cb2-121"><a href="#cb2-121" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;time to survival have been reported in the same unit of months.&quot;</span></span>
+<span id="cb2-122"><a href="#cb2-122" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb2-123"><a href="#cb2-123" aria-hidden="true" tabindex="-1"></a>      <span class="at">columns =</span> <span class="fu">c</span>(stat_1, stat_2),</span>
+<span id="cb2-124"><a href="#cb2-124" aria-hidden="true" tabindex="-1"></a>      <span class="at">replace =</span> <span class="cn">TRUE</span></span>
+<span id="cb2-125"><a href="#cb2-125" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
+<span id="cb2-126"><a href="#cb2-126" aria-hidden="true" tabindex="-1"></a>    gtsummary<span class="sc">::</span><span class="fu">modify_table_body</span>(</span>
+<span id="cb2-127"><a href="#cb2-127" aria-hidden="true" tabindex="-1"></a>      <span class="sc">~</span> .x <span class="sc">|&gt;</span></span>
+<span id="cb2-128"><a href="#cb2-128" aria-hidden="true" tabindex="-1"></a>        dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb2-129"><a href="#cb2-129" aria-hidden="true" tabindex="-1"></a>          dplyr<span class="sc">::</span><span class="fu">across</span>(</span>
+<span id="cb2-130"><a href="#cb2-130" aria-hidden="true" tabindex="-1"></a>            dplyr<span class="sc">::</span><span class="fu">starts_with</span>(<span class="st">&quot;stat_&quot;</span>),</span>
+<span id="cb2-131"><a href="#cb2-131" aria-hidden="true" tabindex="-1"></a>            <span class="sc">~</span> <span class="fu">ifelse</span>(</span>
+<span id="cb2-132"><a href="#cb2-132" aria-hidden="true" tabindex="-1"></a>              variable <span class="sc">==</span> <span class="st">&quot;passed&quot;</span>,</span>
+<span id="cb2-133"><a href="#cb2-133" aria-hidden="true" tabindex="-1"></a>              <span class="fu">ifelse</span>(.x <span class="sc">==</span> <span class="st">&quot;1&quot;</span>, <span class="st">&quot;PASS&quot;</span>, <span class="st">&quot;FAIL&quot;</span>),</span>
+<span id="cb2-134"><a href="#cb2-134" aria-hidden="true" tabindex="-1"></a>              .x</span>
+<span id="cb2-135"><a href="#cb2-135" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb2-136"><a href="#cb2-136" aria-hidden="true" tabindex="-1"></a>          )</span>
+<span id="cb2-137"><a href="#cb2-137" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb2-138"><a href="#cb2-138" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
+<span id="cb2-139"><a href="#cb2-139" aria-hidden="true" tabindex="-1"></a>    gtsummary<span class="sc">::</span><span class="fu">bold_labels</span>() <span class="sc">|&gt;</span></span>
+<span id="cb2-140"><a href="#cb2-140" aria-hidden="true" tabindex="-1"></a>    gtsummary<span class="sc">::</span><span class="fu">modify_caption</span>(<span class="fu">paste0</span>(<span class="st">&quot;**&quot;</span>, full_title, <span class="st">&quot;**&quot;</span>))</span>
+<span id="cb2-141"><a href="#cb2-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-142"><a href="#cb2-142" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Quarto renders the gtsummary object as a publication-ready table.</span></span>
+<span id="cb2-143"><a href="#cb2-143" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (knitr<span class="sc">::</span><span class="fu">is_html_output</span>()) {</span>
+<span id="cb2-144"><a href="#cb2-144" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(formatted_table)</span>
+<span id="cb2-145"><a href="#cb2-145" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-146"><a href="#cb2-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-147"><a href="#cb2-147" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Printing a gtsummary table interactively opens its HTML output in the</span></span>
+<span id="cb2-148"><a href="#cb2-148" aria-hidden="true" tabindex="-1"></a>  <span class="co"># RStudio Viewer without calling the native spreadsheet Data Viewer.</span></span>
+<span id="cb2-149"><a href="#cb2-149" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">interactive</span>()) {</span>
+<span id="cb2-150"><a href="#cb2-150" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tryCatch</span>(</span>
+<span id="cb2-151"><a href="#cb2-151" aria-hidden="true" tabindex="-1"></a>      <span class="fu">print</span>(formatted_table),</span>
+<span id="cb2-152"><a href="#cb2-152" aria-hidden="true" tabindex="-1"></a>      <span class="at">error =</span> <span class="cf">function</span>(error_condition) {</span>
+<span id="cb2-153"><a href="#cb2-153" aria-hidden="true" tabindex="-1"></a>        <span class="fu">message</span>(<span class="st">&quot;The HTML Viewer could not be opened; using the console table.&quot;</span>)</span>
+<span id="cb2-154"><a href="#cb2-154" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb2-155"><a href="#cb2-155" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-156"><a href="#cb2-156" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-157"><a href="#cb2-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-158"><a href="#cb2-158" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Always retain a console fallback and keep the underlying data accessible.</span></span>
+<span id="cb2-159"><a href="#cb2-159" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(checks<span class="sc">$</span>results, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb2-160"><a href="#cb2-160" aria-hidden="true" tabindex="-1"></a>  <span class="fu">invisible</span>(checks<span class="sc">$</span>results)</span>
+<span id="cb2-161"><a href="#cb2-161" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="reconstruction-workflows" class="level2" data-number="3">
@@ -3271,69 +3283,81 @@ window.Quarto = {
 <span id="cb3-670"><a href="#cb3-670" aria-hidden="true" tabindex="-1"></a>    gtsummary<span class="sc">::</span><span class="fu">modify_header</span>(</span>
 <span id="cb3-671"><a href="#cb3-671" aria-hidden="true" tabindex="-1"></a>      gtsummary<span class="sc">::</span><span class="fu">all_stat_cols</span>() <span class="sc">~</span> <span class="st">&quot;**{level}**&quot;</span></span>
 <span id="cb3-672"><a href="#cb3-672" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
-<span id="cb3-673"><a href="#cb3-673" aria-hidden="true" tabindex="-1"></a>    gtsummary<span class="sc">::</span><span class="fu">modify_table_body</span>(</span>
-<span id="cb3-674"><a href="#cb3-674" aria-hidden="true" tabindex="-1"></a>      <span class="sc">~</span> .x <span class="sc">|&gt;</span></span>
-<span id="cb3-675"><a href="#cb3-675" aria-hidden="true" tabindex="-1"></a>        dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
-<span id="cb3-676"><a href="#cb3-676" aria-hidden="true" tabindex="-1"></a>          dplyr<span class="sc">::</span><span class="fu">across</span>(</span>
-<span id="cb3-677"><a href="#cb3-677" aria-hidden="true" tabindex="-1"></a>            dplyr<span class="sc">::</span><span class="fu">starts_with</span>(<span class="st">&quot;stat_&quot;</span>),</span>
-<span id="cb3-678"><a href="#cb3-678" aria-hidden="true" tabindex="-1"></a>            <span class="sc">~</span> <span class="fu">ifelse</span>(</span>
-<span id="cb3-679"><a href="#cb3-679" aria-hidden="true" tabindex="-1"></a>              variable <span class="sc">==</span> <span class="st">&quot;passed&quot;</span>,</span>
-<span id="cb3-680"><a href="#cb3-680" aria-hidden="true" tabindex="-1"></a>              <span class="fu">ifelse</span>(.x <span class="sc">==</span> <span class="st">&quot;1&quot;</span>, <span class="st">&quot;PASS&quot;</span>, <span class="st">&quot;FAIL&quot;</span>),</span>
-<span id="cb3-681"><a href="#cb3-681" aria-hidden="true" tabindex="-1"></a>              .x</span>
-<span id="cb3-682"><a href="#cb3-682" aria-hidden="true" tabindex="-1"></a>            )</span>
-<span id="cb3-683"><a href="#cb3-683" aria-hidden="true" tabindex="-1"></a>          )</span>
-<span id="cb3-684"><a href="#cb3-684" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb3-685"><a href="#cb3-685" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
-<span id="cb3-686"><a href="#cb3-686" aria-hidden="true" tabindex="-1"></a>    gtsummary<span class="sc">::</span><span class="fu">bold_labels</span>() <span class="sc">|&gt;</span></span>
-<span id="cb3-687"><a href="#cb3-687" aria-hidden="true" tabindex="-1"></a>    gtsummary<span class="sc">::</span><span class="fu">modify_caption</span>(<span class="fu">paste0</span>(<span class="st">&quot;**&quot;</span>, full_title, <span class="st">&quot;**&quot;</span>))</span>
-<span id="cb3-688"><a href="#cb3-688" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-689"><a href="#cb3-689" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Quarto renders the gtsummary object as a publication-ready table.</span></span>
-<span id="cb3-690"><a href="#cb3-690" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (knitr<span class="sc">::</span><span class="fu">is_html_output</span>()) {</span>
-<span id="cb3-691"><a href="#cb3-691" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(formatted_table)</span>
-<span id="cb3-692"><a href="#cb3-692" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb3-693"><a href="#cb3-693" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-694"><a href="#cb3-694" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Printing a gtsummary table interactively opens its HTML output in the</span></span>
-<span id="cb3-695"><a href="#cb3-695" aria-hidden="true" tabindex="-1"></a>  <span class="co"># RStudio Viewer without calling the native spreadsheet Data Viewer.</span></span>
-<span id="cb3-696"><a href="#cb3-696" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">interactive</span>()) {</span>
-<span id="cb3-697"><a href="#cb3-697" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tryCatch</span>(</span>
-<span id="cb3-698"><a href="#cb3-698" aria-hidden="true" tabindex="-1"></a>      <span class="fu">print</span>(formatted_table),</span>
-<span id="cb3-699"><a href="#cb3-699" aria-hidden="true" tabindex="-1"></a>      <span class="at">error =</span> <span class="cf">function</span>(error_condition) {</span>
-<span id="cb3-700"><a href="#cb3-700" aria-hidden="true" tabindex="-1"></a>        <span class="fu">message</span>(<span class="st">&quot;The HTML Viewer could not be opened; using the console table.&quot;</span>)</span>
-<span id="cb3-701"><a href="#cb3-701" aria-hidden="true" tabindex="-1"></a>      }</span>
-<span id="cb3-702"><a href="#cb3-702" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb3-703"><a href="#cb3-703" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb3-704"><a href="#cb3-704" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-705"><a href="#cb3-705" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Always retain a console fallback and keep the underlying data accessible.</span></span>
-<span id="cb3-706"><a href="#cb3-706" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(checks<span class="sc">$</span>results, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb3-707"><a href="#cb3-707" aria-hidden="true" tabindex="-1"></a>  <span class="fu">invisible</span>(checks<span class="sc">$</span>results)</span>
-<span id="cb3-708"><a href="#cb3-708" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb3-709"><a href="#cb3-709" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-710"><a href="#cb3-710" aria-hidden="true" tabindex="-1"></a><span class="co"># ---- scenario-1-sanity-check ----</span></span>
-<span id="cb3-711"><a href="#cb3-711" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-712"><a href="#cb3-712" aria-hidden="true" tabindex="-1"></a>scenario1_medians <span class="ot">&lt;-</span> stats<span class="sc">::</span><span class="fu">setNames</span>(</span>
-<span id="cb3-713"><a href="#cb3-713" aria-hidden="true" tabindex="-1"></a>  arm_summary<span class="sc">$</span>median_os,</span>
-<span id="cb3-714"><a href="#cb3-714" aria-hidden="true" tabindex="-1"></a>  arm_summary<span class="sc">$</span>arm</span>
-<span id="cb3-715"><a href="#cb3-715" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-673"><a href="#cb3-673" aria-hidden="true" tabindex="-1"></a>    gtsummary<span class="sc">::</span><span class="fu">modify_footnote_header</span>(</span>
+<span id="cb3-674"><a href="#cb3-674" aria-hidden="true" tabindex="-1"></a>      <span class="at">footnote =</span> <span class="cn">NA_character_</span>,</span>
+<span id="cb3-675"><a href="#cb3-675" aria-hidden="true" tabindex="-1"></a>      <span class="at">columns =</span> gtsummary<span class="sc">::</span><span class="fu">all_stat_cols</span>()</span>
+<span id="cb3-676"><a href="#cb3-676" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
+<span id="cb3-677"><a href="#cb3-677" aria-hidden="true" tabindex="-1"></a>    gtsummary<span class="sc">::</span><span class="fu">modify_footnote_header</span>(</span>
+<span id="cb3-678"><a href="#cb3-678" aria-hidden="true" tabindex="-1"></a>      <span class="at">footnote =</span> <span class="fu">paste0</span>(</span>
+<span id="cb3-679"><a href="#cb3-679" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;Cross-check and confirm that the original and reconstructed median &quot;</span>,</span>
+<span id="cb3-680"><a href="#cb3-680" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;time to survival have been reported in the same unit of months.&quot;</span></span>
+<span id="cb3-681"><a href="#cb3-681" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb3-682"><a href="#cb3-682" aria-hidden="true" tabindex="-1"></a>      <span class="at">columns =</span> <span class="fu">c</span>(stat_1, stat_2),</span>
+<span id="cb3-683"><a href="#cb3-683" aria-hidden="true" tabindex="-1"></a>      <span class="at">replace =</span> <span class="cn">TRUE</span></span>
+<span id="cb3-684"><a href="#cb3-684" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
+<span id="cb3-685"><a href="#cb3-685" aria-hidden="true" tabindex="-1"></a>    gtsummary<span class="sc">::</span><span class="fu">modify_table_body</span>(</span>
+<span id="cb3-686"><a href="#cb3-686" aria-hidden="true" tabindex="-1"></a>      <span class="sc">~</span> .x <span class="sc">|&gt;</span></span>
+<span id="cb3-687"><a href="#cb3-687" aria-hidden="true" tabindex="-1"></a>        dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb3-688"><a href="#cb3-688" aria-hidden="true" tabindex="-1"></a>          dplyr<span class="sc">::</span><span class="fu">across</span>(</span>
+<span id="cb3-689"><a href="#cb3-689" aria-hidden="true" tabindex="-1"></a>            dplyr<span class="sc">::</span><span class="fu">starts_with</span>(<span class="st">&quot;stat_&quot;</span>),</span>
+<span id="cb3-690"><a href="#cb3-690" aria-hidden="true" tabindex="-1"></a>            <span class="sc">~</span> <span class="fu">ifelse</span>(</span>
+<span id="cb3-691"><a href="#cb3-691" aria-hidden="true" tabindex="-1"></a>              variable <span class="sc">==</span> <span class="st">&quot;passed&quot;</span>,</span>
+<span id="cb3-692"><a href="#cb3-692" aria-hidden="true" tabindex="-1"></a>              <span class="fu">ifelse</span>(.x <span class="sc">==</span> <span class="st">&quot;1&quot;</span>, <span class="st">&quot;PASS&quot;</span>, <span class="st">&quot;FAIL&quot;</span>),</span>
+<span id="cb3-693"><a href="#cb3-693" aria-hidden="true" tabindex="-1"></a>              .x</span>
+<span id="cb3-694"><a href="#cb3-694" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb3-695"><a href="#cb3-695" aria-hidden="true" tabindex="-1"></a>          )</span>
+<span id="cb3-696"><a href="#cb3-696" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb3-697"><a href="#cb3-697" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
+<span id="cb3-698"><a href="#cb3-698" aria-hidden="true" tabindex="-1"></a>    gtsummary<span class="sc">::</span><span class="fu">bold_labels</span>() <span class="sc">|&gt;</span></span>
+<span id="cb3-699"><a href="#cb3-699" aria-hidden="true" tabindex="-1"></a>    gtsummary<span class="sc">::</span><span class="fu">modify_caption</span>(<span class="fu">paste0</span>(<span class="st">&quot;**&quot;</span>, full_title, <span class="st">&quot;**&quot;</span>))</span>
+<span id="cb3-700"><a href="#cb3-700" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-701"><a href="#cb3-701" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Quarto renders the gtsummary object as a publication-ready table.</span></span>
+<span id="cb3-702"><a href="#cb3-702" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (knitr<span class="sc">::</span><span class="fu">is_html_output</span>()) {</span>
+<span id="cb3-703"><a href="#cb3-703" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(formatted_table)</span>
+<span id="cb3-704"><a href="#cb3-704" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-705"><a href="#cb3-705" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-706"><a href="#cb3-706" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Printing a gtsummary table interactively opens its HTML output in the</span></span>
+<span id="cb3-707"><a href="#cb3-707" aria-hidden="true" tabindex="-1"></a>  <span class="co"># RStudio Viewer without calling the native spreadsheet Data Viewer.</span></span>
+<span id="cb3-708"><a href="#cb3-708" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">interactive</span>()) {</span>
+<span id="cb3-709"><a href="#cb3-709" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tryCatch</span>(</span>
+<span id="cb3-710"><a href="#cb3-710" aria-hidden="true" tabindex="-1"></a>      <span class="fu">print</span>(formatted_table),</span>
+<span id="cb3-711"><a href="#cb3-711" aria-hidden="true" tabindex="-1"></a>      <span class="at">error =</span> <span class="cf">function</span>(error_condition) {</span>
+<span id="cb3-712"><a href="#cb3-712" aria-hidden="true" tabindex="-1"></a>        <span class="fu">message</span>(<span class="st">&quot;The HTML Viewer could not be opened; using the console table.&quot;</span>)</span>
+<span id="cb3-713"><a href="#cb3-713" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb3-714"><a href="#cb3-714" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb3-715"><a href="#cb3-715" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb3-716"><a href="#cb3-716" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-717"><a href="#cb3-717" aria-hidden="true" tabindex="-1"></a>scenario1_sanity_checks <span class="ot">&lt;-</span> <span class="fu">run_reconstruction_sanity_checks</span>(</span>
-<span id="cb3-718"><a href="#cb3-718" aria-hidden="true" tabindex="-1"></a>  <span class="at">reconstructed_hr =</span> hr,</span>
-<span id="cb3-719"><a href="#cb3-719" aria-hidden="true" tabindex="-1"></a>  <span class="at">reported_hr =</span> reported_hr_arm2_vs_arm1,</span>
-<span id="cb3-720"><a href="#cb3-720" aria-hidden="true" tabindex="-1"></a>  <span class="at">reconstructed_medians =</span> <span class="fu">c</span>(</span>
-<span id="cb3-721"><a href="#cb3-721" aria-hidden="true" tabindex="-1"></a>    scenario1_medians[[arm1_label]],</span>
-<span id="cb3-722"><a href="#cb3-722" aria-hidden="true" tabindex="-1"></a>    scenario1_medians[[arm2_label]]</span>
-<span id="cb3-723"><a href="#cb3-723" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb3-724"><a href="#cb3-724" aria-hidden="true" tabindex="-1"></a>  <span class="at">reported_medians =</span> <span class="fu">c</span>(</span>
-<span id="cb3-725"><a href="#cb3-725" aria-hidden="true" tabindex="-1"></a>    reported_median_os_arm1,</span>
-<span id="cb3-726"><a href="#cb3-726" aria-hidden="true" tabindex="-1"></a>    reported_median_os_arm2</span>
-<span id="cb3-727"><a href="#cb3-727" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb3-728"><a href="#cb3-728" aria-hidden="true" tabindex="-1"></a>  <span class="at">arm_labels =</span> <span class="fu">c</span>(arm1_label, arm2_label)</span>
-<span id="cb3-729"><a href="#cb3-729" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-730"><a href="#cb3-730" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-731"><a href="#cb3-731" aria-hidden="true" tabindex="-1"></a><span class="fu">display_sanity_check_table</span>(</span>
-<span id="cb3-732"><a href="#cb3-732" aria-hidden="true" tabindex="-1"></a>  scenario1_sanity_checks,</span>
-<span id="cb3-733"><a href="#cb3-733" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Scenario 1 reconstruction sanity checks&quot;</span></span>
-<span id="cb3-734"><a href="#cb3-734" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-735"><a href="#cb3-735" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb3-717"><a href="#cb3-717" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Always retain a console fallback and keep the underlying data accessible.</span></span>
+<span id="cb3-718"><a href="#cb3-718" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(checks<span class="sc">$</span>results, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-719"><a href="#cb3-719" aria-hidden="true" tabindex="-1"></a>  <span class="fu">invisible</span>(checks<span class="sc">$</span>results)</span>
+<span id="cb3-720"><a href="#cb3-720" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-721"><a href="#cb3-721" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-722"><a href="#cb3-722" aria-hidden="true" tabindex="-1"></a><span class="co"># ---- scenario-1-sanity-check ----</span></span>
+<span id="cb3-723"><a href="#cb3-723" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-724"><a href="#cb3-724" aria-hidden="true" tabindex="-1"></a>scenario1_medians <span class="ot">&lt;-</span> stats<span class="sc">::</span><span class="fu">setNames</span>(</span>
+<span id="cb3-725"><a href="#cb3-725" aria-hidden="true" tabindex="-1"></a>  arm_summary<span class="sc">$</span>median_os,</span>
+<span id="cb3-726"><a href="#cb3-726" aria-hidden="true" tabindex="-1"></a>  arm_summary<span class="sc">$</span>arm</span>
+<span id="cb3-727"><a href="#cb3-727" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-728"><a href="#cb3-728" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-729"><a href="#cb3-729" aria-hidden="true" tabindex="-1"></a>scenario1_sanity_checks <span class="ot">&lt;-</span> <span class="fu">run_reconstruction_sanity_checks</span>(</span>
+<span id="cb3-730"><a href="#cb3-730" aria-hidden="true" tabindex="-1"></a>  <span class="at">reconstructed_hr =</span> hr,</span>
+<span id="cb3-731"><a href="#cb3-731" aria-hidden="true" tabindex="-1"></a>  <span class="at">reported_hr =</span> reported_hr_arm2_vs_arm1,</span>
+<span id="cb3-732"><a href="#cb3-732" aria-hidden="true" tabindex="-1"></a>  <span class="at">reconstructed_medians =</span> <span class="fu">c</span>(</span>
+<span id="cb3-733"><a href="#cb3-733" aria-hidden="true" tabindex="-1"></a>    scenario1_medians[[arm1_label]],</span>
+<span id="cb3-734"><a href="#cb3-734" aria-hidden="true" tabindex="-1"></a>    scenario1_medians[[arm2_label]]</span>
+<span id="cb3-735"><a href="#cb3-735" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb3-736"><a href="#cb3-736" aria-hidden="true" tabindex="-1"></a>  <span class="at">reported_medians =</span> <span class="fu">c</span>(</span>
+<span id="cb3-737"><a href="#cb3-737" aria-hidden="true" tabindex="-1"></a>    reported_median_os_arm1,</span>
+<span id="cb3-738"><a href="#cb3-738" aria-hidden="true" tabindex="-1"></a>    reported_median_os_arm2</span>
+<span id="cb3-739"><a href="#cb3-739" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb3-740"><a href="#cb3-740" aria-hidden="true" tabindex="-1"></a>  <span class="at">arm_labels =</span> <span class="fu">c</span>(arm1_label, arm2_label)</span>
+<span id="cb3-741"><a href="#cb3-741" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-742"><a href="#cb3-742" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-743"><a href="#cb3-743" aria-hidden="true" tabindex="-1"></a><span class="fu">display_sanity_check_table</span>(</span>
+<span id="cb3-744"><a href="#cb3-744" aria-hidden="true" tabindex="-1"></a>  scenario1_sanity_checks,</span>
+<span id="cb3-745"><a href="#cb3-745" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Scenario 1 reconstruction sanity checks&quot;</span></span>
+<span id="cb3-746"><a href="#cb3-746" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-747"><a href="#cb3-747" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -4038,20 +4062,20 @@ OVERALL RESULT: PASS - all median OS and HR sanity checks passed.</code></pre>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Scenario 1 reconstruction sanity checks&quot;</span></span>
 <span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
-<div id="yulfcezaxz" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#yulfcezaxz table {
+<div id="pyrzyiclpo" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#pyrzyiclpo table {
 font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 -webkit-font-smoothing: antialiased;
 -moz-osx-font-smoothing: grayscale;
 }
-#yulfcezaxz thead, #yulfcezaxz tbody, #yulfcezaxz tfoot, #yulfcezaxz tr, #yulfcezaxz td, #yulfcezaxz th {
+#pyrzyiclpo thead, #pyrzyiclpo tbody, #pyrzyiclpo tfoot, #pyrzyiclpo tr, #pyrzyiclpo td, #pyrzyiclpo th {
 border-style: none;
 }
-#yulfcezaxz p {
+#pyrzyiclpo p {
 margin: 0;
 padding: 0;
 }
-#yulfcezaxz .gt_table {
+#pyrzyiclpo .gt_table {
 display: table;
 border-collapse: collapse;
 line-height: normal;
@@ -4076,11 +4100,11 @@ border-left-style: none;
 border-left-width: 2px;
 border-left-color: #D3D3D3;
 }
-#yulfcezaxz .gt_caption {
+#pyrzyiclpo .gt_caption {
 padding-top: 4px;
 padding-bottom: 4px;
 }
-#yulfcezaxz .gt_title {
+#pyrzyiclpo .gt_title {
 color: #333333;
 font-size: 125%;
 font-weight: initial;
@@ -4091,7 +4115,7 @@ padding-right: 5px;
 border-bottom-color: #FFFFFF;
 border-bottom-width: 0;
 }
-#yulfcezaxz .gt_subtitle {
+#pyrzyiclpo .gt_subtitle {
 color: #333333;
 font-size: 85%;
 font-weight: initial;
@@ -4102,7 +4126,7 @@ padding-right: 5px;
 border-top-color: #FFFFFF;
 border-top-width: 0;
 }
-#yulfcezaxz .gt_heading {
+#pyrzyiclpo .gt_heading {
 background-color: #FFFFFF;
 text-align: center;
 border-bottom-color: #FFFFFF;
@@ -4113,12 +4137,12 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#yulfcezaxz .gt_bottom_border {
+#pyrzyiclpo .gt_bottom_border {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#yulfcezaxz .gt_col_headings {
+#pyrzyiclpo .gt_col_headings {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -4132,7 +4156,7 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#yulfcezaxz .gt_col_heading {
+#pyrzyiclpo .gt_col_heading {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -4151,7 +4175,7 @@ padding-left: 5px;
 padding-right: 5px;
 overflow-x: hidden;
 }
-#yulfcezaxz .gt_column_spanner_outer {
+#pyrzyiclpo .gt_column_spanner_outer {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -4162,13 +4186,13 @@ padding-bottom: 0;
 padding-left: 4px;
 padding-right: 4px;
 }
-#yulfcezaxz .gt_column_spanner_outer:first-child {
+#pyrzyiclpo .gt_column_spanner_outer:first-child {
 padding-left: 0;
 }
-#yulfcezaxz .gt_column_spanner_outer:last-child {
+#pyrzyiclpo .gt_column_spanner_outer:last-child {
 padding-right: 0;
 }
-#yulfcezaxz .gt_column_spanner {
+#pyrzyiclpo .gt_column_spanner {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
@@ -4179,10 +4203,10 @@ overflow-x: hidden;
 display: inline-block;
 width: 100%;
 }
-#yulfcezaxz .gt_spanner_row {
+#pyrzyiclpo .gt_spanner_row {
 border-bottom-style: hidden;
 }
-#yulfcezaxz .gt_group_heading {
+#pyrzyiclpo .gt_group_heading {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -4207,7 +4231,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 text-align: left;
 }
-#yulfcezaxz .gt_empty_group_heading {
+#pyrzyiclpo .gt_empty_group_heading {
 padding: 0.5px;
 color: #333333;
 background-color: #FFFFFF;
@@ -4221,13 +4245,13 @@ border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 vertical-align: middle;
 }
-#yulfcezaxz .gt_from_md > :first-child {
+#pyrzyiclpo .gt_from_md > :first-child {
 margin-top: 0;
 }
-#yulfcezaxz .gt_from_md > :last-child {
+#pyrzyiclpo .gt_from_md > :last-child {
 margin-bottom: 0;
 }
-#yulfcezaxz .gt_row {
+#pyrzyiclpo .gt_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -4245,7 +4269,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 overflow-x: hidden;
 }
-#yulfcezaxz .gt_stub {
+#pyrzyiclpo .gt_stub {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -4257,7 +4281,7 @@ border-right-color: #D3D3D3;
 padding-left: 5px;
 padding-right: 5px;
 }
-#yulfcezaxz .gt_stub_row_group {
+#pyrzyiclpo .gt_stub_row_group {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -4270,13 +4294,13 @@ padding-left: 5px;
 padding-right: 5px;
 vertical-align: top;
 }
-#yulfcezaxz .gt_row_group_first td {
+#pyrzyiclpo .gt_row_group_first td {
 border-top-width: 2px;
 }
-#yulfcezaxz .gt_row_group_first th {
+#pyrzyiclpo .gt_row_group_first th {
 border-top-width: 2px;
 }
-#yulfcezaxz .gt_summary_row {
+#pyrzyiclpo .gt_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -4285,14 +4309,14 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#yulfcezaxz .gt_first_summary_row {
+#pyrzyiclpo .gt_first_summary_row {
 border-top-style: solid;
 border-top-color: #D3D3D3;
 }
-#yulfcezaxz .gt_first_summary_row.thick {
+#pyrzyiclpo .gt_first_summary_row.thick {
 border-top-width: 2px;
 }
-#yulfcezaxz .gt_last_summary_row {
+#pyrzyiclpo .gt_last_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -4301,7 +4325,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#yulfcezaxz .gt_grand_summary_row {
+#pyrzyiclpo .gt_grand_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -4310,7 +4334,7 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#yulfcezaxz .gt_first_grand_summary_row {
+#pyrzyiclpo .gt_first_grand_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -4319,7 +4343,7 @@ border-top-style: double;
 border-top-width: 6px;
 border-top-color: #D3D3D3;
 }
-#yulfcezaxz .gt_last_grand_summary_row_top {
+#pyrzyiclpo .gt_last_grand_summary_row_top {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -4328,10 +4352,10 @@ border-bottom-style: double;
 border-bottom-width: 6px;
 border-bottom-color: #D3D3D3;
 }
-#yulfcezaxz .gt_striped {
+#pyrzyiclpo .gt_striped {
 background-color: rgba(128, 128, 128, 0.05);
 }
-#yulfcezaxz .gt_table_body {
+#pyrzyiclpo .gt_table_body {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -4339,7 +4363,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#yulfcezaxz .gt_footnotes {
+#pyrzyiclpo .gt_footnotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -4352,7 +4376,7 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#yulfcezaxz .gt_footnote {
+#pyrzyiclpo .gt_footnote {
 margin: 0px;
 font-size: 90%;
 padding-top: 4px;
@@ -4360,7 +4384,7 @@ padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#yulfcezaxz .gt_sourcenotes {
+#pyrzyiclpo .gt_sourcenotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -4373,64 +4397,64 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#yulfcezaxz .gt_sourcenote {
+#pyrzyiclpo .gt_sourcenote {
 font-size: 90%;
 padding-top: 4px;
 padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#yulfcezaxz .gt_left {
+#pyrzyiclpo .gt_left {
 text-align: left;
 }
-#yulfcezaxz .gt_center {
+#pyrzyiclpo .gt_center {
 text-align: center;
 }
-#yulfcezaxz .gt_right {
+#pyrzyiclpo .gt_right {
 text-align: right;
 font-variant-numeric: tabular-nums;
 }
-#yulfcezaxz .gt_font_normal {
+#pyrzyiclpo .gt_font_normal {
 font-weight: normal;
 }
-#yulfcezaxz .gt_font_bold {
+#pyrzyiclpo .gt_font_bold {
 font-weight: bold;
 }
-#yulfcezaxz .gt_font_italic {
+#pyrzyiclpo .gt_font_italic {
 font-style: italic;
 }
-#yulfcezaxz .gt_super {
+#pyrzyiclpo .gt_super {
 font-size: 65%;
 }
-#yulfcezaxz .gt_footnote_marks {
+#pyrzyiclpo .gt_footnote_marks {
 font-size: 75%;
 vertical-align: 0.4em;
 position: initial;
 }
-#yulfcezaxz .gt_asterisk {
+#pyrzyiclpo .gt_asterisk {
 font-size: 100%;
 vertical-align: 0;
 }
-#yulfcezaxz .gt_indent_1 {
+#pyrzyiclpo .gt_indent_1 {
 text-indent: 5px;
 }
-#yulfcezaxz .gt_indent_2 {
+#pyrzyiclpo .gt_indent_2 {
 text-indent: 10px;
 }
-#yulfcezaxz .gt_indent_3 {
+#pyrzyiclpo .gt_indent_3 {
 text-indent: 15px;
 }
-#yulfcezaxz .gt_indent_4 {
+#pyrzyiclpo .gt_indent_4 {
 text-indent: 20px;
 }
-#yulfcezaxz .gt_indent_5 {
+#pyrzyiclpo .gt_indent_5 {
 text-indent: 25px;
 }
-#yulfcezaxz .katex-display {
+#pyrzyiclpo .katex-display {
 display: inline-flex !important;
 margin-bottom: 0.75em !important;
 }
-#yulfcezaxz div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#pyrzyiclpo div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
 height: 0px !important;
 }
 </style>
@@ -4442,7 +4466,7 @@ height: 0px !important;
 <th id="label" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col"><strong>Characteristic</strong></th>
 <th id="stat_1" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col"><strong>Median OS: Control</strong><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;line-height:0;"><sup>1</sup></span></th>
 <th id="stat_2" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col"><strong>Median OS: Treatment</strong><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;line-height:0;"><sup>1</sup></span></th>
-<th id="stat_3" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col"><strong>HR: Treatment vs Control</strong><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;line-height:0;"><sup>1</sup></span></th>
+<th id="stat_3" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col"><strong>HR: Treatment vs Control</strong></th>
 </tr>
 </thead>
 <tbody class="gt_table_body">
@@ -4478,7 +4502,7 @@ height: 0px !important;
 </tr>
 </tbody><tfoot>
 <tr class="gt_footnotes odd">
-<td colspan="4" class="gt_footnote"><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;line-height:0;"><sup>1</sup></span> Mean</td>
+<td colspan="4" class="gt_footnote"><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;line-height:0;"><sup>1</sup></span> Cross-check and confirm that the original and reconstructed median time to survival have been reported in the same unit of months.</td>
 </tr>
 </tfoot>
 
@@ -5364,69 +5388,81 @@ height: 0px !important;
 <span id="cb27-837"><a href="#cb27-837" aria-hidden="true" tabindex="-1"></a>    gtsummary<span class="sc">::</span><span class="fu">modify_header</span>(</span>
 <span id="cb27-838"><a href="#cb27-838" aria-hidden="true" tabindex="-1"></a>      gtsummary<span class="sc">::</span><span class="fu">all_stat_cols</span>() <span class="sc">~</span> <span class="st">&quot;**{level}**&quot;</span></span>
 <span id="cb27-839"><a href="#cb27-839" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
-<span id="cb27-840"><a href="#cb27-840" aria-hidden="true" tabindex="-1"></a>    gtsummary<span class="sc">::</span><span class="fu">modify_table_body</span>(</span>
-<span id="cb27-841"><a href="#cb27-841" aria-hidden="true" tabindex="-1"></a>      <span class="sc">~</span> .x <span class="sc">|&gt;</span></span>
-<span id="cb27-842"><a href="#cb27-842" aria-hidden="true" tabindex="-1"></a>        dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
-<span id="cb27-843"><a href="#cb27-843" aria-hidden="true" tabindex="-1"></a>          dplyr<span class="sc">::</span><span class="fu">across</span>(</span>
-<span id="cb27-844"><a href="#cb27-844" aria-hidden="true" tabindex="-1"></a>            dplyr<span class="sc">::</span><span class="fu">starts_with</span>(<span class="st">&quot;stat_&quot;</span>),</span>
-<span id="cb27-845"><a href="#cb27-845" aria-hidden="true" tabindex="-1"></a>            <span class="sc">~</span> <span class="fu">ifelse</span>(</span>
-<span id="cb27-846"><a href="#cb27-846" aria-hidden="true" tabindex="-1"></a>              variable <span class="sc">==</span> <span class="st">&quot;passed&quot;</span>,</span>
-<span id="cb27-847"><a href="#cb27-847" aria-hidden="true" tabindex="-1"></a>              <span class="fu">ifelse</span>(.x <span class="sc">==</span> <span class="st">&quot;1&quot;</span>, <span class="st">&quot;PASS&quot;</span>, <span class="st">&quot;FAIL&quot;</span>),</span>
-<span id="cb27-848"><a href="#cb27-848" aria-hidden="true" tabindex="-1"></a>              .x</span>
-<span id="cb27-849"><a href="#cb27-849" aria-hidden="true" tabindex="-1"></a>            )</span>
-<span id="cb27-850"><a href="#cb27-850" aria-hidden="true" tabindex="-1"></a>          )</span>
-<span id="cb27-851"><a href="#cb27-851" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb27-852"><a href="#cb27-852" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
-<span id="cb27-853"><a href="#cb27-853" aria-hidden="true" tabindex="-1"></a>    gtsummary<span class="sc">::</span><span class="fu">bold_labels</span>() <span class="sc">|&gt;</span></span>
-<span id="cb27-854"><a href="#cb27-854" aria-hidden="true" tabindex="-1"></a>    gtsummary<span class="sc">::</span><span class="fu">modify_caption</span>(<span class="fu">paste0</span>(<span class="st">&quot;**&quot;</span>, full_title, <span class="st">&quot;**&quot;</span>))</span>
-<span id="cb27-855"><a href="#cb27-855" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-856"><a href="#cb27-856" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Quarto renders the gtsummary object as a publication-ready table.</span></span>
-<span id="cb27-857"><a href="#cb27-857" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (knitr<span class="sc">::</span><span class="fu">is_html_output</span>()) {</span>
-<span id="cb27-858"><a href="#cb27-858" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(formatted_table)</span>
-<span id="cb27-859"><a href="#cb27-859" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb27-860"><a href="#cb27-860" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-861"><a href="#cb27-861" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Printing a gtsummary table interactively opens its HTML output in the</span></span>
-<span id="cb27-862"><a href="#cb27-862" aria-hidden="true" tabindex="-1"></a>  <span class="co"># RStudio Viewer without calling the native spreadsheet Data Viewer.</span></span>
-<span id="cb27-863"><a href="#cb27-863" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">interactive</span>()) {</span>
-<span id="cb27-864"><a href="#cb27-864" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tryCatch</span>(</span>
-<span id="cb27-865"><a href="#cb27-865" aria-hidden="true" tabindex="-1"></a>      <span class="fu">print</span>(formatted_table),</span>
-<span id="cb27-866"><a href="#cb27-866" aria-hidden="true" tabindex="-1"></a>      <span class="at">error =</span> <span class="cf">function</span>(error_condition) {</span>
-<span id="cb27-867"><a href="#cb27-867" aria-hidden="true" tabindex="-1"></a>        <span class="fu">message</span>(<span class="st">&quot;The HTML Viewer could not be opened; using the console table.&quot;</span>)</span>
-<span id="cb27-868"><a href="#cb27-868" aria-hidden="true" tabindex="-1"></a>      }</span>
-<span id="cb27-869"><a href="#cb27-869" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb27-870"><a href="#cb27-870" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb27-871"><a href="#cb27-871" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-872"><a href="#cb27-872" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Always retain a console fallback and keep the underlying data accessible.</span></span>
-<span id="cb27-873"><a href="#cb27-873" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(checks<span class="sc">$</span>results, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb27-874"><a href="#cb27-874" aria-hidden="true" tabindex="-1"></a>  <span class="fu">invisible</span>(checks<span class="sc">$</span>results)</span>
-<span id="cb27-875"><a href="#cb27-875" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb27-876"><a href="#cb27-876" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-877"><a href="#cb27-877" aria-hidden="true" tabindex="-1"></a><span class="co"># ---- scenario-2-sanity-check ----</span></span>
-<span id="cb27-878"><a href="#cb27-878" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-879"><a href="#cb27-879" aria-hidden="true" tabindex="-1"></a>scenario2_medians <span class="ot">&lt;-</span> stats<span class="sc">::</span><span class="fu">setNames</span>(</span>
-<span id="cb27-880"><a href="#cb27-880" aria-hidden="true" tabindex="-1"></a>  risk_arm_summary<span class="sc">$</span>median_os,</span>
-<span id="cb27-881"><a href="#cb27-881" aria-hidden="true" tabindex="-1"></a>  risk_arm_summary<span class="sc">$</span>arm</span>
-<span id="cb27-882"><a href="#cb27-882" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb27-840"><a href="#cb27-840" aria-hidden="true" tabindex="-1"></a>    gtsummary<span class="sc">::</span><span class="fu">modify_footnote_header</span>(</span>
+<span id="cb27-841"><a href="#cb27-841" aria-hidden="true" tabindex="-1"></a>      <span class="at">footnote =</span> <span class="cn">NA_character_</span>,</span>
+<span id="cb27-842"><a href="#cb27-842" aria-hidden="true" tabindex="-1"></a>      <span class="at">columns =</span> gtsummary<span class="sc">::</span><span class="fu">all_stat_cols</span>()</span>
+<span id="cb27-843"><a href="#cb27-843" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
+<span id="cb27-844"><a href="#cb27-844" aria-hidden="true" tabindex="-1"></a>    gtsummary<span class="sc">::</span><span class="fu">modify_footnote_header</span>(</span>
+<span id="cb27-845"><a href="#cb27-845" aria-hidden="true" tabindex="-1"></a>      <span class="at">footnote =</span> <span class="fu">paste0</span>(</span>
+<span id="cb27-846"><a href="#cb27-846" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;Cross-check and confirm that the original and reconstructed median &quot;</span>,</span>
+<span id="cb27-847"><a href="#cb27-847" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;time to survival have been reported in the same unit of months.&quot;</span></span>
+<span id="cb27-848"><a href="#cb27-848" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb27-849"><a href="#cb27-849" aria-hidden="true" tabindex="-1"></a>      <span class="at">columns =</span> <span class="fu">c</span>(stat_1, stat_2),</span>
+<span id="cb27-850"><a href="#cb27-850" aria-hidden="true" tabindex="-1"></a>      <span class="at">replace =</span> <span class="cn">TRUE</span></span>
+<span id="cb27-851"><a href="#cb27-851" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
+<span id="cb27-852"><a href="#cb27-852" aria-hidden="true" tabindex="-1"></a>    gtsummary<span class="sc">::</span><span class="fu">modify_table_body</span>(</span>
+<span id="cb27-853"><a href="#cb27-853" aria-hidden="true" tabindex="-1"></a>      <span class="sc">~</span> .x <span class="sc">|&gt;</span></span>
+<span id="cb27-854"><a href="#cb27-854" aria-hidden="true" tabindex="-1"></a>        dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb27-855"><a href="#cb27-855" aria-hidden="true" tabindex="-1"></a>          dplyr<span class="sc">::</span><span class="fu">across</span>(</span>
+<span id="cb27-856"><a href="#cb27-856" aria-hidden="true" tabindex="-1"></a>            dplyr<span class="sc">::</span><span class="fu">starts_with</span>(<span class="st">&quot;stat_&quot;</span>),</span>
+<span id="cb27-857"><a href="#cb27-857" aria-hidden="true" tabindex="-1"></a>            <span class="sc">~</span> <span class="fu">ifelse</span>(</span>
+<span id="cb27-858"><a href="#cb27-858" aria-hidden="true" tabindex="-1"></a>              variable <span class="sc">==</span> <span class="st">&quot;passed&quot;</span>,</span>
+<span id="cb27-859"><a href="#cb27-859" aria-hidden="true" tabindex="-1"></a>              <span class="fu">ifelse</span>(.x <span class="sc">==</span> <span class="st">&quot;1&quot;</span>, <span class="st">&quot;PASS&quot;</span>, <span class="st">&quot;FAIL&quot;</span>),</span>
+<span id="cb27-860"><a href="#cb27-860" aria-hidden="true" tabindex="-1"></a>              .x</span>
+<span id="cb27-861"><a href="#cb27-861" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb27-862"><a href="#cb27-862" aria-hidden="true" tabindex="-1"></a>          )</span>
+<span id="cb27-863"><a href="#cb27-863" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb27-864"><a href="#cb27-864" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
+<span id="cb27-865"><a href="#cb27-865" aria-hidden="true" tabindex="-1"></a>    gtsummary<span class="sc">::</span><span class="fu">bold_labels</span>() <span class="sc">|&gt;</span></span>
+<span id="cb27-866"><a href="#cb27-866" aria-hidden="true" tabindex="-1"></a>    gtsummary<span class="sc">::</span><span class="fu">modify_caption</span>(<span class="fu">paste0</span>(<span class="st">&quot;**&quot;</span>, full_title, <span class="st">&quot;**&quot;</span>))</span>
+<span id="cb27-867"><a href="#cb27-867" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-868"><a href="#cb27-868" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Quarto renders the gtsummary object as a publication-ready table.</span></span>
+<span id="cb27-869"><a href="#cb27-869" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (knitr<span class="sc">::</span><span class="fu">is_html_output</span>()) {</span>
+<span id="cb27-870"><a href="#cb27-870" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(formatted_table)</span>
+<span id="cb27-871"><a href="#cb27-871" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb27-872"><a href="#cb27-872" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-873"><a href="#cb27-873" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Printing a gtsummary table interactively opens its HTML output in the</span></span>
+<span id="cb27-874"><a href="#cb27-874" aria-hidden="true" tabindex="-1"></a>  <span class="co"># RStudio Viewer without calling the native spreadsheet Data Viewer.</span></span>
+<span id="cb27-875"><a href="#cb27-875" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">interactive</span>()) {</span>
+<span id="cb27-876"><a href="#cb27-876" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tryCatch</span>(</span>
+<span id="cb27-877"><a href="#cb27-877" aria-hidden="true" tabindex="-1"></a>      <span class="fu">print</span>(formatted_table),</span>
+<span id="cb27-878"><a href="#cb27-878" aria-hidden="true" tabindex="-1"></a>      <span class="at">error =</span> <span class="cf">function</span>(error_condition) {</span>
+<span id="cb27-879"><a href="#cb27-879" aria-hidden="true" tabindex="-1"></a>        <span class="fu">message</span>(<span class="st">&quot;The HTML Viewer could not be opened; using the console table.&quot;</span>)</span>
+<span id="cb27-880"><a href="#cb27-880" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb27-881"><a href="#cb27-881" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb27-882"><a href="#cb27-882" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb27-883"><a href="#cb27-883" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-884"><a href="#cb27-884" aria-hidden="true" tabindex="-1"></a>scenario2_sanity_checks <span class="ot">&lt;-</span> <span class="fu">run_reconstruction_sanity_checks</span>(</span>
-<span id="cb27-885"><a href="#cb27-885" aria-hidden="true" tabindex="-1"></a>  <span class="at">reconstructed_hr =</span> risk_hr,</span>
-<span id="cb27-886"><a href="#cb27-886" aria-hidden="true" tabindex="-1"></a>  <span class="at">reported_hr =</span> risk_reported_hr_arm2_vs_arm1,</span>
-<span id="cb27-887"><a href="#cb27-887" aria-hidden="true" tabindex="-1"></a>  <span class="at">reconstructed_medians =</span> <span class="fu">c</span>(</span>
-<span id="cb27-888"><a href="#cb27-888" aria-hidden="true" tabindex="-1"></a>    scenario2_medians[[risk_arm1_label]],</span>
-<span id="cb27-889"><a href="#cb27-889" aria-hidden="true" tabindex="-1"></a>    scenario2_medians[[risk_arm2_label]]</span>
-<span id="cb27-890"><a href="#cb27-890" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb27-891"><a href="#cb27-891" aria-hidden="true" tabindex="-1"></a>  <span class="at">reported_medians =</span> <span class="fu">c</span>(</span>
-<span id="cb27-892"><a href="#cb27-892" aria-hidden="true" tabindex="-1"></a>    risk_reported_median_os_arm1,</span>
-<span id="cb27-893"><a href="#cb27-893" aria-hidden="true" tabindex="-1"></a>    risk_reported_median_os_arm2</span>
-<span id="cb27-894"><a href="#cb27-894" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb27-895"><a href="#cb27-895" aria-hidden="true" tabindex="-1"></a>  <span class="at">arm_labels =</span> <span class="fu">c</span>(risk_arm1_label, risk_arm2_label)</span>
-<span id="cb27-896"><a href="#cb27-896" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb27-897"><a href="#cb27-897" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-898"><a href="#cb27-898" aria-hidden="true" tabindex="-1"></a><span class="fu">display_sanity_check_table</span>(</span>
-<span id="cb27-899"><a href="#cb27-899" aria-hidden="true" tabindex="-1"></a>  scenario2_sanity_checks,</span>
-<span id="cb27-900"><a href="#cb27-900" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Scenario 2 reconstruction sanity checks&quot;</span></span>
-<span id="cb27-901"><a href="#cb27-901" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb27-902"><a href="#cb27-902" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb27-884"><a href="#cb27-884" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Always retain a console fallback and keep the underlying data accessible.</span></span>
+<span id="cb27-885"><a href="#cb27-885" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(checks<span class="sc">$</span>results, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb27-886"><a href="#cb27-886" aria-hidden="true" tabindex="-1"></a>  <span class="fu">invisible</span>(checks<span class="sc">$</span>results)</span>
+<span id="cb27-887"><a href="#cb27-887" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb27-888"><a href="#cb27-888" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-889"><a href="#cb27-889" aria-hidden="true" tabindex="-1"></a><span class="co"># ---- scenario-2-sanity-check ----</span></span>
+<span id="cb27-890"><a href="#cb27-890" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-891"><a href="#cb27-891" aria-hidden="true" tabindex="-1"></a>scenario2_medians <span class="ot">&lt;-</span> stats<span class="sc">::</span><span class="fu">setNames</span>(</span>
+<span id="cb27-892"><a href="#cb27-892" aria-hidden="true" tabindex="-1"></a>  risk_arm_summary<span class="sc">$</span>median_os,</span>
+<span id="cb27-893"><a href="#cb27-893" aria-hidden="true" tabindex="-1"></a>  risk_arm_summary<span class="sc">$</span>arm</span>
+<span id="cb27-894"><a href="#cb27-894" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb27-895"><a href="#cb27-895" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-896"><a href="#cb27-896" aria-hidden="true" tabindex="-1"></a>scenario2_sanity_checks <span class="ot">&lt;-</span> <span class="fu">run_reconstruction_sanity_checks</span>(</span>
+<span id="cb27-897"><a href="#cb27-897" aria-hidden="true" tabindex="-1"></a>  <span class="at">reconstructed_hr =</span> risk_hr,</span>
+<span id="cb27-898"><a href="#cb27-898" aria-hidden="true" tabindex="-1"></a>  <span class="at">reported_hr =</span> risk_reported_hr_arm2_vs_arm1,</span>
+<span id="cb27-899"><a href="#cb27-899" aria-hidden="true" tabindex="-1"></a>  <span class="at">reconstructed_medians =</span> <span class="fu">c</span>(</span>
+<span id="cb27-900"><a href="#cb27-900" aria-hidden="true" tabindex="-1"></a>    scenario2_medians[[risk_arm1_label]],</span>
+<span id="cb27-901"><a href="#cb27-901" aria-hidden="true" tabindex="-1"></a>    scenario2_medians[[risk_arm2_label]]</span>
+<span id="cb27-902"><a href="#cb27-902" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb27-903"><a href="#cb27-903" aria-hidden="true" tabindex="-1"></a>  <span class="at">reported_medians =</span> <span class="fu">c</span>(</span>
+<span id="cb27-904"><a href="#cb27-904" aria-hidden="true" tabindex="-1"></a>    risk_reported_median_os_arm1,</span>
+<span id="cb27-905"><a href="#cb27-905" aria-hidden="true" tabindex="-1"></a>    risk_reported_median_os_arm2</span>
+<span id="cb27-906"><a href="#cb27-906" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb27-907"><a href="#cb27-907" aria-hidden="true" tabindex="-1"></a>  <span class="at">arm_labels =</span> <span class="fu">c</span>(risk_arm1_label, risk_arm2_label)</span>
+<span id="cb27-908"><a href="#cb27-908" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb27-909"><a href="#cb27-909" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-910"><a href="#cb27-910" aria-hidden="true" tabindex="-1"></a><span class="fu">display_sanity_check_table</span>(</span>
+<span id="cb27-911"><a href="#cb27-911" aria-hidden="true" tabindex="-1"></a>  scenario2_sanity_checks,</span>
+<span id="cb27-912"><a href="#cb27-912" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Scenario 2 reconstruction sanity checks&quot;</span></span>
+<span id="cb27-913"><a href="#cb27-913" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb27-914"><a href="#cb27-914" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <p>When a publication reports numbers at risk beneath the KM plot, use those counts to estimate censoring within each reported interval. This is the Guyot-style reconstruction and generally contains more information than the baseline-only workflow.</p>
 <section id="user-inputs-for-two-arms" class="level4" data-number="3.0.11">
@@ -6118,20 +6154,20 @@ OVERALL RESULT: PASS - all median OS and HR sanity checks passed.</code></pre>
 <span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Scenario 2 reconstruction sanity checks&quot;</span></span>
 <span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
-<div id="xpwykcyses" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#xpwykcyses table {
+<div id="spfvclhmua" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#spfvclhmua table {
 font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 -webkit-font-smoothing: antialiased;
 -moz-osx-font-smoothing: grayscale;
 }
-#xpwykcyses thead, #xpwykcyses tbody, #xpwykcyses tfoot, #xpwykcyses tr, #xpwykcyses td, #xpwykcyses th {
+#spfvclhmua thead, #spfvclhmua tbody, #spfvclhmua tfoot, #spfvclhmua tr, #spfvclhmua td, #spfvclhmua th {
 border-style: none;
 }
-#xpwykcyses p {
+#spfvclhmua p {
 margin: 0;
 padding: 0;
 }
-#xpwykcyses .gt_table {
+#spfvclhmua .gt_table {
 display: table;
 border-collapse: collapse;
 line-height: normal;
@@ -6156,11 +6192,11 @@ border-left-style: none;
 border-left-width: 2px;
 border-left-color: #D3D3D3;
 }
-#xpwykcyses .gt_caption {
+#spfvclhmua .gt_caption {
 padding-top: 4px;
 padding-bottom: 4px;
 }
-#xpwykcyses .gt_title {
+#spfvclhmua .gt_title {
 color: #333333;
 font-size: 125%;
 font-weight: initial;
@@ -6171,7 +6207,7 @@ padding-right: 5px;
 border-bottom-color: #FFFFFF;
 border-bottom-width: 0;
 }
-#xpwykcyses .gt_subtitle {
+#spfvclhmua .gt_subtitle {
 color: #333333;
 font-size: 85%;
 font-weight: initial;
@@ -6182,7 +6218,7 @@ padding-right: 5px;
 border-top-color: #FFFFFF;
 border-top-width: 0;
 }
-#xpwykcyses .gt_heading {
+#spfvclhmua .gt_heading {
 background-color: #FFFFFF;
 text-align: center;
 border-bottom-color: #FFFFFF;
@@ -6193,12 +6229,12 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#xpwykcyses .gt_bottom_border {
+#spfvclhmua .gt_bottom_border {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#xpwykcyses .gt_col_headings {
+#spfvclhmua .gt_col_headings {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -6212,7 +6248,7 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#xpwykcyses .gt_col_heading {
+#spfvclhmua .gt_col_heading {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -6231,7 +6267,7 @@ padding-left: 5px;
 padding-right: 5px;
 overflow-x: hidden;
 }
-#xpwykcyses .gt_column_spanner_outer {
+#spfvclhmua .gt_column_spanner_outer {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -6242,13 +6278,13 @@ padding-bottom: 0;
 padding-left: 4px;
 padding-right: 4px;
 }
-#xpwykcyses .gt_column_spanner_outer:first-child {
+#spfvclhmua .gt_column_spanner_outer:first-child {
 padding-left: 0;
 }
-#xpwykcyses .gt_column_spanner_outer:last-child {
+#spfvclhmua .gt_column_spanner_outer:last-child {
 padding-right: 0;
 }
-#xpwykcyses .gt_column_spanner {
+#spfvclhmua .gt_column_spanner {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
@@ -6259,10 +6295,10 @@ overflow-x: hidden;
 display: inline-block;
 width: 100%;
 }
-#xpwykcyses .gt_spanner_row {
+#spfvclhmua .gt_spanner_row {
 border-bottom-style: hidden;
 }
-#xpwykcyses .gt_group_heading {
+#spfvclhmua .gt_group_heading {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -6287,7 +6323,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 text-align: left;
 }
-#xpwykcyses .gt_empty_group_heading {
+#spfvclhmua .gt_empty_group_heading {
 padding: 0.5px;
 color: #333333;
 background-color: #FFFFFF;
@@ -6301,13 +6337,13 @@ border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 vertical-align: middle;
 }
-#xpwykcyses .gt_from_md > :first-child {
+#spfvclhmua .gt_from_md > :first-child {
 margin-top: 0;
 }
-#xpwykcyses .gt_from_md > :last-child {
+#spfvclhmua .gt_from_md > :last-child {
 margin-bottom: 0;
 }
-#xpwykcyses .gt_row {
+#spfvclhmua .gt_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -6325,7 +6361,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 overflow-x: hidden;
 }
-#xpwykcyses .gt_stub {
+#spfvclhmua .gt_stub {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -6337,7 +6373,7 @@ border-right-color: #D3D3D3;
 padding-left: 5px;
 padding-right: 5px;
 }
-#xpwykcyses .gt_stub_row_group {
+#spfvclhmua .gt_stub_row_group {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -6350,13 +6386,13 @@ padding-left: 5px;
 padding-right: 5px;
 vertical-align: top;
 }
-#xpwykcyses .gt_row_group_first td {
+#spfvclhmua .gt_row_group_first td {
 border-top-width: 2px;
 }
-#xpwykcyses .gt_row_group_first th {
+#spfvclhmua .gt_row_group_first th {
 border-top-width: 2px;
 }
-#xpwykcyses .gt_summary_row {
+#spfvclhmua .gt_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -6365,14 +6401,14 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#xpwykcyses .gt_first_summary_row {
+#spfvclhmua .gt_first_summary_row {
 border-top-style: solid;
 border-top-color: #D3D3D3;
 }
-#xpwykcyses .gt_first_summary_row.thick {
+#spfvclhmua .gt_first_summary_row.thick {
 border-top-width: 2px;
 }
-#xpwykcyses .gt_last_summary_row {
+#spfvclhmua .gt_last_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -6381,7 +6417,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#xpwykcyses .gt_grand_summary_row {
+#spfvclhmua .gt_grand_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -6390,7 +6426,7 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#xpwykcyses .gt_first_grand_summary_row {
+#spfvclhmua .gt_first_grand_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -6399,7 +6435,7 @@ border-top-style: double;
 border-top-width: 6px;
 border-top-color: #D3D3D3;
 }
-#xpwykcyses .gt_last_grand_summary_row_top {
+#spfvclhmua .gt_last_grand_summary_row_top {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -6408,10 +6444,10 @@ border-bottom-style: double;
 border-bottom-width: 6px;
 border-bottom-color: #D3D3D3;
 }
-#xpwykcyses .gt_striped {
+#spfvclhmua .gt_striped {
 background-color: rgba(128, 128, 128, 0.05);
 }
-#xpwykcyses .gt_table_body {
+#spfvclhmua .gt_table_body {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -6419,7 +6455,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#xpwykcyses .gt_footnotes {
+#spfvclhmua .gt_footnotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -6432,7 +6468,7 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#xpwykcyses .gt_footnote {
+#spfvclhmua .gt_footnote {
 margin: 0px;
 font-size: 90%;
 padding-top: 4px;
@@ -6440,7 +6476,7 @@ padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#xpwykcyses .gt_sourcenotes {
+#spfvclhmua .gt_sourcenotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -6453,64 +6489,64 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#xpwykcyses .gt_sourcenote {
+#spfvclhmua .gt_sourcenote {
 font-size: 90%;
 padding-top: 4px;
 padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#xpwykcyses .gt_left {
+#spfvclhmua .gt_left {
 text-align: left;
 }
-#xpwykcyses .gt_center {
+#spfvclhmua .gt_center {
 text-align: center;
 }
-#xpwykcyses .gt_right {
+#spfvclhmua .gt_right {
 text-align: right;
 font-variant-numeric: tabular-nums;
 }
-#xpwykcyses .gt_font_normal {
+#spfvclhmua .gt_font_normal {
 font-weight: normal;
 }
-#xpwykcyses .gt_font_bold {
+#spfvclhmua .gt_font_bold {
 font-weight: bold;
 }
-#xpwykcyses .gt_font_italic {
+#spfvclhmua .gt_font_italic {
 font-style: italic;
 }
-#xpwykcyses .gt_super {
+#spfvclhmua .gt_super {
 font-size: 65%;
 }
-#xpwykcyses .gt_footnote_marks {
+#spfvclhmua .gt_footnote_marks {
 font-size: 75%;
 vertical-align: 0.4em;
 position: initial;
 }
-#xpwykcyses .gt_asterisk {
+#spfvclhmua .gt_asterisk {
 font-size: 100%;
 vertical-align: 0;
 }
-#xpwykcyses .gt_indent_1 {
+#spfvclhmua .gt_indent_1 {
 text-indent: 5px;
 }
-#xpwykcyses .gt_indent_2 {
+#spfvclhmua .gt_indent_2 {
 text-indent: 10px;
 }
-#xpwykcyses .gt_indent_3 {
+#spfvclhmua .gt_indent_3 {
 text-indent: 15px;
 }
-#xpwykcyses .gt_indent_4 {
+#spfvclhmua .gt_indent_4 {
 text-indent: 20px;
 }
-#xpwykcyses .gt_indent_5 {
+#spfvclhmua .gt_indent_5 {
 text-indent: 25px;
 }
-#xpwykcyses .katex-display {
+#spfvclhmua .katex-display {
 display: inline-flex !important;
 margin-bottom: 0.75em !important;
 }
-#xpwykcyses div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#spfvclhmua div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
 height: 0px !important;
 }
 </style>
@@ -6522,7 +6558,7 @@ height: 0px !important;
 <th id="label" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col"><strong>Characteristic</strong></th>
 <th id="stat_1" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col"><strong>Median OS: Control</strong><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;line-height:0;"><sup>1</sup></span></th>
 <th id="stat_2" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col"><strong>Median OS: Treatment</strong><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;line-height:0;"><sup>1</sup></span></th>
-<th id="stat_3" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col"><strong>HR: Treatment vs Control</strong><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;line-height:0;"><sup>1</sup></span></th>
+<th id="stat_3" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col"><strong>HR: Treatment vs Control</strong></th>
 </tr>
 </thead>
 <tbody class="gt_table_body">
@@ -6558,7 +6594,7 @@ height: 0px !important;
 </tr>
 </tbody><tfoot>
 <tr class="gt_footnotes odd">
-<td colspan="4" class="gt_footnote"><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;line-height:0;"><sup>1</sup></span> Mean</td>
+<td colspan="4" class="gt_footnote"><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;line-height:0;"><sup>1</sup></span> Cross-check and confirm that the original and reconstructed median time to survival have been reported in the same unit of months.</td>
 </tr>
 </tfoot>
 
