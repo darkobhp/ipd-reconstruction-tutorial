@@ -837,6 +837,18 @@ display_sanity_check_table <- function(checks, table_title) {
     gtsummary::modify_header(
       gtsummary::all_stat_cols() ~ "**{level}**"
     ) |>
+    gtsummary::modify_footnote_header(
+      footnote = NA_character_,
+      columns = gtsummary::all_stat_cols()
+    ) |>
+    gtsummary::modify_footnote_header(
+      footnote = paste0(
+        "Cross-check and confirm that the original and reconstructed median ",
+        "time to survival have been reported in the same unit of months."
+      ),
+      columns = c(stat_1, stat_2),
+      replace = TRUE
+    ) |>
     gtsummary::modify_table_body(
       ~ .x |>
         dplyr::mutate(
