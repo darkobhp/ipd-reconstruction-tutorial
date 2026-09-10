@@ -27,158 +27,6 @@ invisible(
   lapply(required_packages, library, character.only = TRUE)
 )
 
-# ---- sanity-check-function ----
-
-run_reconstruction_sanity_checks <- function(
-    reconstructed_hr,
-    reported_hr,
-    reconstructed_medians,
-    reported_medians,
-    arm_labels,
-    median_tolerance_months = 0.20,
-    log_hr_tolerance = 0.10) {
-
-  if (length(reconstructed_hr) != 1L || !is.finite(reconstructed_hr) ||
-      reconstructed_hr <= 0 || length(reported_hr) != 1L ||
-      !is.finite(reported_hr) || reported_hr <= 0) {
-    stop("Reported and reconstructed HRs must each be one positive number.")
-  }
-
-  if (length(reconstructed_medians) != 2L ||
-      length(reported_medians) != 2L || length(arm_labels) != 2L) {
-    stop("Supply exactly two reconstructed medians, reported medians, and arm labels.")
-  }
-
-  median_difference <- abs(reconstructed_medians - reported_medians)
-  median_pass <- is.finite(median_difference) &
-    median_difference <= median_tolerance_months + sqrt(.Machine$double.eps)
-
-  log_hr_difference <- abs(log(reported_hr / reconstructed_hr))
-  hr_pass <- is.finite(log_hr_difference) &&
-    log_hr_difference <= log_hr_tolerance + sqrt(.Machine$double.eps)
-
-  results <- data.frame(
-    check = c(
-      paste0("Median OS: ", arm_labels[1]),
-      paste0("Median OS: ", arm_labels[2]),
-      paste0("HR: ", arm_labels[2], " vs ", arm_labels[1])
-    ),
-    reported = sprintf("%.2f", c(reported_medians, reported_hr)),
-    reconstructed = sprintf("%.2f", c(reconstructed_medians, reconstructed_hr)),
-    comparison = c(
-      sprintf("absolute difference = %.2f months", median_difference),
-      sprintf("absolute log ratio = %.3f", log_hr_difference)
-    ),
-    acceptance_rule = c(
-      rep(sprintf("difference <= %.2f months", median_tolerance_months), 2L),
-      sprintf("absolute log ratio <= %.2f", log_hr_tolerance)
-    ),
-    result = ifelse(c(median_pass, hr_pass), "PASS", "FAIL"),
-    check.names = FALSE
-  )
-
-  display_data <- data.frame(
-    check = results$check,
-    reported = c(reported_medians, reported_hr),
-    reconstructed = c(reconstructed_medians, reconstructed_hr),
-    diagnostic = c(median_difference, log_hr_difference),
-    acceptance_limit = c(
-      median_tolerance_months,
-      median_tolerance_months,
-      log_hr_tolerance
-    ),
-    passed = as.integer(c(median_pass, hr_pass)),
-    check.names = FALSE
-  )
-
-  failed_checks <- results$check[results$result == "FAIL"]
-  if (length(failed_checks) == 0L) {
-    cat("\nOVERALL RESULT: PASS - all median OS and HR sanity checks passed.\n")
-  } else {
-    cat("\nOVERALL RESULT: FAIL - the following check(s) did not pass:\n")
-    cat(paste0("- ", failed_checks, collapse = "\n"), "\n")
-  }
-
-  invisible(
-    list(
-      results = results,
-      display_data = display_data,
-      all_pass = length(failed_checks) == 0L
-    )
-  )
-}
-
-display_sanity_check_table <- function(checks, table_title) {
-  overall_result <- ifelse(checks$all_pass, "PASS", "FAIL")
-  full_title <- paste0(table_title, " - Overall result: ", overall_result)
-
-  table_data <- checks$display_data |>
-    dplyr::mutate(
-      check = factor(check, levels = check)
-    )
-
-  formatted_table <- table_data |>
-    gtsummary::tbl_summary(
-      by = check,
-      include = -check,
-      type = dplyr::everything() ~ "continuous",
-      statistic = dplyr::everything() ~ "{mean}",
-      digits = list(
-        reported ~ 2,
-        reconstructed ~ 2,
-        diagnostic ~ 3,
-        acceptance_limit ~ 2,
-        passed ~ 0
-      ),
-      label = list(
-        reported ~ "Reported",
-        reconstructed ~ "Reconstructed",
-        diagnostic ~ "Absolute difference / log ratio",
-        acceptance_limit ~ "Acceptance limit (<=)",
-        passed ~ "Result"
-      ),
-      missing = "no"
-    ) |>
-    gtsummary::modify_header(
-      gtsummary::all_stat_cols() ~ "**{level}**"
-    ) |>
-    gtsummary::modify_table_body(
-      ~ .x |>
-        dplyr::mutate(
-          dplyr::across(
-            dplyr::starts_with("stat_"),
-            ~ ifelse(
-              variable == "passed",
-              ifelse(.x == "1", "PASS", "FAIL"),
-              .x
-            )
-          )
-        )
-    ) |>
-    gtsummary::bold_labels() |>
-    gtsummary::modify_caption(paste0("**", full_title, "**"))
-
-  # Quarto renders the gtsummary object as a publication-ready table.
-  if (knitr::is_html_output()) {
-    return(formatted_table)
-  }
-
-  # Printing a gtsummary table interactively opens its HTML output in the
-  # RStudio Viewer without calling the native spreadsheet Data Viewer.
-  if (interactive()) {
-    tryCatch(
-      print(formatted_table),
-      error = function(error_condition) {
-        message("The HTML Viewer could not be opened; using the console table.")
-      }
-    )
-  }
-
-  # Always retain a console fallback and keep the underlying data accessible.
-  print(checks$results, row.names = FALSE)
-  invisible(checks$results)
-}
-
 # ---- user-inputs ----
 
 # ====================== USER INPUTS: CHANGE THESE ======================
@@ -706,6 +554,158 @@ final_km_plot$plot <- final_km_plot$plot +
   )
 
 print(final_km_plot)
+
+# ---- sanity-check-function ----
+
+run_reconstruction_sanity_checks <- function(
+    reconstructed_hr,
+    reported_hr,
+    reconstructed_medians,
+    reported_medians,
+    arm_labels,
+    median_tolerance_months = 0.20,
+    log_hr_tolerance = 0.10) {
+
+  if (length(reconstructed_hr) != 1L || !is.finite(reconstructed_hr) ||
+      reconstructed_hr <= 0 || length(reported_hr) != 1L ||
+      !is.finite(reported_hr) || reported_hr <= 0) {
+    stop("Reported and reconstructed HRs must each be one positive number.")
+  }
+
+  if (length(reconstructed_medians) != 2L ||
+      length(reported_medians) != 2L || length(arm_labels) != 2L) {
+    stop("Supply exactly two reconstructed medians, reported medians, and arm labels.")
+  }
+
+  median_difference <- abs(reconstructed_medians - reported_medians)
+  median_pass <- is.finite(median_difference) &
+    median_difference <= median_tolerance_months + sqrt(.Machine$double.eps)
+
+  log_hr_difference <- abs(log(reported_hr / reconstructed_hr))
+  hr_pass <- is.finite(log_hr_difference) &&
+    log_hr_difference <= log_hr_tolerance + sqrt(.Machine$double.eps)
+
+  results <- data.frame(
+    check = c(
+      paste0("Median OS: ", arm_labels[1]),
+      paste0("Median OS: ", arm_labels[2]),
+      paste0("HR: ", arm_labels[2], " vs ", arm_labels[1])
+    ),
+    reported = sprintf("%.2f", c(reported_medians, reported_hr)),
+    reconstructed = sprintf("%.2f", c(reconstructed_medians, reconstructed_hr)),
+    comparison = c(
+      sprintf("absolute difference = %.2f months", median_difference),
+      sprintf("absolute log ratio = %.3f", log_hr_difference)
+    ),
+    acceptance_rule = c(
+      rep(sprintf("difference <= %.2f months", median_tolerance_months), 2L),
+      sprintf("absolute log ratio <= %.2f", log_hr_tolerance)
+    ),
+    result = ifelse(c(median_pass, hr_pass), "PASS", "FAIL"),
+    check.names = FALSE
+  )
+
+  display_data <- data.frame(
+    check = results$check,
+    reported = c(reported_medians, reported_hr),
+    reconstructed = c(reconstructed_medians, reconstructed_hr),
+    diagnostic = c(median_difference, log_hr_difference),
+    acceptance_limit = c(
+      median_tolerance_months,
+      median_tolerance_months,
+      log_hr_tolerance
+    ),
+    passed = as.integer(c(median_pass, hr_pass)),
+    check.names = FALSE
+  )
+
+  failed_checks <- results$check[results$result == "FAIL"]
+  if (length(failed_checks) == 0L) {
+    cat("\nOVERALL RESULT: PASS - all median OS and HR sanity checks passed.\n")
+  } else {
+    cat("\nOVERALL RESULT: FAIL - the following check(s) did not pass:\n")
+    cat(paste0("- ", failed_checks, collapse = "\n"), "\n")
+  }
+
+  invisible(
+    list(
+      results = results,
+      display_data = display_data,
+      all_pass = length(failed_checks) == 0L
+    )
+  )
+}
+
+display_sanity_check_table <- function(checks, table_title) {
+  overall_result <- ifelse(checks$all_pass, "PASS", "FAIL")
+  full_title <- paste0(table_title, " - Overall result: ", overall_result)
+
+  table_data <- checks$display_data |>
+    dplyr::mutate(
+      check = factor(check, levels = check)
+    )
+
+  formatted_table <- table_data |>
+    gtsummary::tbl_summary(
+      by = check,
+      include = -check,
+      type = dplyr::everything() ~ "continuous",
+      statistic = dplyr::everything() ~ "{mean}",
+      digits = list(
+        reported ~ 2,
+        reconstructed ~ 2,
+        diagnostic ~ 3,
+        acceptance_limit ~ 2,
+        passed ~ 0
+      ),
+      label = list(
+        reported ~ "Reported",
+        reconstructed ~ "Reconstructed",
+        diagnostic ~ "Absolute difference / log ratio",
+        acceptance_limit ~ "Acceptance limit (<=)",
+        passed ~ "Result"
+      ),
+      missing = "no"
+    ) |>
+    gtsummary::modify_header(
+      gtsummary::all_stat_cols() ~ "**{level}**"
+    ) |>
+    gtsummary::modify_table_body(
+      ~ .x |>
+        dplyr::mutate(
+          dplyr::across(
+            dplyr::starts_with("stat_"),
+            ~ ifelse(
+              variable == "passed",
+              ifelse(.x == "1", "PASS", "FAIL"),
+              .x
+            )
+          )
+        )
+    ) |>
+    gtsummary::bold_labels() |>
+    gtsummary::modify_caption(paste0("**", full_title, "**"))
+
+  # Quarto renders the gtsummary object as a publication-ready table.
+  if (knitr::is_html_output()) {
+    return(formatted_table)
+  }
+
+  # Printing a gtsummary table interactively opens its HTML output in the
+  # RStudio Viewer without calling the native spreadsheet Data Viewer.
+  if (interactive()) {
+    tryCatch(
+      print(formatted_table),
+      error = function(error_condition) {
+        message("The HTML Viewer could not be opened; using the console table.")
+      }
+    )
+  }
+
+  # Always retain a console fallback and keep the underlying data accessible.
+  print(checks$results, row.names = FALSE)
+  invisible(checks$results)
+}
 
 # ---- scenario-1-sanity-check ----
 
